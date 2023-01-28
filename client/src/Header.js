@@ -72,6 +72,11 @@ const Header = ({ isLoggedIn, logout }) => {
             >
               Log out
             </button>
+            <Link to="/dashboard">
+              <button className="bg-blue-500 font-[700] text-[0.90rem] text-white px-[20px] py-[5px] rounded-md border-2 border-blue-500 hover:bg-blue-500 hover:translate-y-[6px] transition-all duration-300">
+                Dashboard
+              </button>
+            </Link>
           </div>
         )}
       </div>
@@ -123,20 +128,46 @@ const Header = ({ isLoggedIn, logout }) => {
                   <div className="w-full">Support</div>
                 </Link>
               </li>
-              <li className="mt-12 mb-4">
-                <Link to="/login" onClick={hideDropdown}>
+              {!isLoggedIn && (
+                <li className="mt-12 mb-4">
+                  <Link to="/login" onClick={hideDropdown}>
+                    <div className="w-[fit-content] px-10 py-1 text-center text-[0.95rem] rounded-md border-2 border-blue-500">
+                      Sign In
+                    </div>
+                  </Link>
+                </li>
+              )}
+              {!isLoggedIn && (
+                <li className="my-4">
+                  <Link to="/register" onClick={hideDropdown}>
+                    <div className="w-[fit-content] px-10 py-1 text-center text-[0.95rem] rounded-md border-2 border-blue-500 bg-blue-500 text-white">
+                      Register
+                    </div>
+                  </Link>
+                </li>
+              )}
+              {isLoggedIn && (
+                <Link to="/dashboard">
+                  <li className="mt-12 mb-4">
+                    <div className="w-[fit-content] bg-blue-500 px-10 py-1 text-center text-[0.95rem] rounded-md border-2 border-blue-500 text-white">
+                      Dashboard
+                    </div>
+                  </li>
+                </Link>
+              )}
+              {isLoggedIn && (
+                <li
+                  className="mb-4"
+                  onClick={() => {
+                    hideDropdown();
+                    logout();
+                  }}
+                >
                   <div className="w-[fit-content] px-10 py-1 text-center text-[0.95rem] rounded-md border-2 border-blue-500">
-                    Sign In
+                    Log out
                   </div>
-                </Link>
-              </li>
-              <li className="my-4">
-                <Link to="/register" onClick={hideDropdown}>
-                  <div className="w-[fit-content] px-10 py-1 text-center text-[0.95rem] rounded-md border-2 border-blue-500 bg-blue-500 text-white">
-                    Register
-                  </div>
-                </Link>
-              </li>
+                </li>
+              )}
             </ul>
           </div>
         )}

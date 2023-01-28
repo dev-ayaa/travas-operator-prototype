@@ -3,7 +3,13 @@ import { Link } from "react-router-dom";
 import Footer from "../Footer";
 import ScrollToTop from "../ScrollToTop";
 
-function Step1() {
+function Step1({
+  handleTourChange,
+  handleTimeChange,
+  joinStr,
+  tourPackageData,
+  tourPackageTime,
+}) {
   return (
     <>
       <div className="pt-[100px] md:pt-[120px] w-[90%] px-1 mx-auto md:w-full md:mx-0 md:pl-[80px] md:pr-[50px] pb-48">
@@ -49,6 +55,10 @@ function Step1() {
               className="border-b-2 focus:outline-none pb-2 pl-1 w-[90%] md:w-[70%]"
               type="text"
               placeholder="Tour title"
+              value={tourPackageData.title ? tourPackageData.title : ""}
+              id="title"
+              onChange={handleTourChange}
+              required
             />
           </div>
           {/* Destination */}
@@ -64,6 +74,12 @@ function Step1() {
               className="border-b-2 focus:outline-none pb-2 pl-1 w-[90%] md:w-[70%]"
               type="text"
               placeholder="Destination"
+              value={
+                tourPackageData.destination ? tourPackageData.destination : ""
+              }
+              id="destination"
+              onChange={handleTourChange}
+              required
             />
           </div>
           {/* Meeting Point */}
@@ -79,6 +95,14 @@ function Step1() {
               className="border-b-2 focus:outline-none pb-2 pl-1 w-[90%] md:w-[70%]"
               type="text"
               placeholder="Meeting point"
+              value={
+                tourPackageData.meeting_point
+                  ? tourPackageData.meeting_point
+                  : ""
+              }
+              id="meeting_point"
+              onChange={handleTourChange}
+              required
             />
           </div>
           {/* Duration */}
@@ -98,9 +122,28 @@ function Step1() {
                   <input
                     className=" border-b-2 focus:outline-none pb-2 pl-1 w-[70px]"
                     type="number"
-                    placeholder="12:00"
+                    placeholder="10"
+                    maxLength="2"
+                    value={
+                      tourPackageTime.start_time_time
+                        ? tourPackageTime.start_time_time
+                        : ""
+                    }
+                    id="start_time_time"
+                    onChange={handleTimeChange}
+                    required
                   />
-                  <select className="border-b-2 bg-transparent pb-2 pl-1 w-[70px]">
+                  <select
+                    className="border-b-2 bg-transparent pb-2 pl-1 w-[70px]"
+                    value={
+                      tourPackageTime.start_time_ampm
+                        ? tourPackageTime.start_time_ampm
+                        : ""
+                    }
+                    id="start_time_ampm"
+                    onChange={handleTimeChange}
+                    required
+                  >
                     <option>AM</option>
                     <option>PM</option>
                   </select>
@@ -114,10 +157,18 @@ function Step1() {
                   {/* day */}
                   <div className="flex flex-col">
                     <input
-                      id="day"
                       className="text-center border-b-2 focus:outline-none pb-2 pl-1 w-[70px]"
                       type="number"
                       placeholder="10"
+                      maxLength="2"
+                      value={
+                        tourPackageTime.start_date_day
+                          ? tourPackageTime.start_date_day
+                          : ""
+                      }
+                      id="start_date_day"
+                      onChange={handleTimeChange}
+                      required
                     />
                     <label
                       className="font-light text-center text-xs"
@@ -129,10 +180,18 @@ function Step1() {
                   {/* month */}
                   <div className="flex flex-col">
                     <input
-                      id="month"
                       className="text-center border-b-2 focus:outline-none pb-2 pl-1 w-[70px]"
                       type="number"
                       placeholder="10"
+                      maxLength="2"
+                      value={
+                        tourPackageTime.start_date_month
+                          ? tourPackageTime.start_date_month
+                          : ""
+                      }
+                      id="start_date_month"
+                      onChange={handleTimeChange}
+                      required
                     />
                     <label
                       className="text-center font-light text-xs"
@@ -144,10 +203,18 @@ function Step1() {
                   {/* year */}
                   <div className="flex flex-col">
                     <input
-                      id="year"
                       className="text-center border-b-2 focus:outline-none pb-2 pl-1 w-[70px]"
                       type="number"
-                      placeholder="10"
+                      placeholder="2023"
+                      maxLength="4"
+                      value={
+                        tourPackageTime.start_date_year
+                          ? tourPackageTime.start_date_year
+                          : ""
+                      }
+                      id="start_date_year"
+                      onChange={handleTimeChange}
+                      required
                     />
                     <label
                       className="font-light text-center text-xs"
@@ -166,10 +233,18 @@ function Step1() {
                   {/* day */}
                   <div className="flex flex-col">
                     <input
-                      id="day"
                       className="text-center border-b-2 focus:outline-none pb-2 pl-1 w-[70px]"
                       type="number"
                       placeholder="10"
+                      maxLength="2"
+                      value={
+                        tourPackageTime.end_date_day
+                          ? tourPackageTime.end_date_day
+                          : ""
+                      }
+                      id="end_date_day"
+                      onChange={handleTimeChange}
+                      required
                     />
                     <label
                       className="font-light text-center text-xs"
@@ -181,10 +256,18 @@ function Step1() {
                   {/* month */}
                   <div className="flex flex-col">
                     <input
-                      id="month"
                       className="border-b-2 text-center focus:outline-none pb-2 pl-1 w-[70px]"
                       type="number"
                       placeholder="10"
+                      maxLength="2"
+                      value={
+                        tourPackageTime.end_date_month
+                          ? tourPackageTime.end_date_month
+                          : ""
+                      }
+                      id="end_date_month"
+                      onChange={handleTimeChange}
+                      required
                     />
                     <label
                       className="font-light text-center  text-xs"
@@ -196,10 +279,18 @@ function Step1() {
                   {/* year */}
                   <div className="flex flex-col">
                     <input
-                      id="year"
                       className="border-b-2 text-center focus:outline-none pb-2 pl-1 w-[70px]"
                       type="number"
-                      placeholder="10"
+                      placeholder="2023"
+                      maxLength="4"
+                      value={
+                        tourPackageTime.end_date_year
+                          ? tourPackageTime.end_date_year
+                          : ""
+                      }
+                      id="end_date_year"
+                      onChange={handleTimeChange}
+                      required
                     />
                     <label
                       className="font-light text-center text-xs"
@@ -228,9 +319,12 @@ function Step1() {
                 <label htmlFor="price">Price Per Person</label>
                 <input
                   className="border-b-2 focus:outline-none pl-1 pb-2"
-                  id="price"
                   type="number"
-                  placeholder="00:00"
+                  placeholder="5000"
+                  value={tourPackageData.price ? tourPackageData.price : ""}
+                  id="price"
+                  onChange={handleTourChange}
+                  required
                 />
               </div>
               {/* Language */}
@@ -240,9 +334,14 @@ function Step1() {
                 </label>
                 <input
                   className="border-b-2 focus:outline-none pl-1 pb-2"
-                  id="language"
                   type="text"
                   placeholder="Language"
+                  value={
+                    tourPackageData.language ? tourPackageData.language : ""
+                  }
+                  id="language"
+                  onChange={handleTourChange}
+                  required
                 />
               </div>
               {/* Number of tourists */}
@@ -252,26 +351,33 @@ function Step1() {
                 </label>
                 <input
                   className="border-b-2 focus:outline-none pl-1 pb-2"
-                  id="num_of_tourists"
                   type="number"
-                  placeholder="0000"
+                  placeholder="100"
+                  value={
+                    tourPackageData.number_of_tourists
+                      ? tourPackageData.number_of_tourists
+                      : ""
+                  }
+                  id="number_of_tourists"
+                  onChange={handleTourChange}
+                  required
                 />
               </div>
             </div>
           </div>
 
           {/* Next Button */}
-          <div className="flex justify-end mt-24">
-            <Link to="/step2">
-              <button className="bg-[#1F66D0] text-white font-semibold px-12 py-3 md:px-24">
-                Next
-              </button>
-            </Link>
-          </div>
+          <button
+            type="submit"
+            className="bg-[#1F66D0] text-white font-semibold px-12 py-3 mt-16 float-right md:px-24"
+            onClick={joinStr}
+          >
+            Next
+          </button>
         </form>
+        <ScrollToTop />
       </div>
       <Footer />
-      <ScrollToTop />
     </>
   );
 }

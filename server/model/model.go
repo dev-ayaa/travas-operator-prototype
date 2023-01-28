@@ -1,8 +1,9 @@
 package model
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type Operator struct {
@@ -40,10 +41,11 @@ type Tour struct {
 	Price           string             `bson:"price" json:"price"`
 	Contact         string             `bson:"contact" json:"contact,omitempty"`
 	Language        string             `bson:"language" json:"language,omitempty"`
+	Image           map[string]any     `bson:"tour_images" json:"tour_images"`
 	NumberOfTourist string             `bson:"number_of_tourist" json:"number_of_tourist,omitempty"`
 	Description     string             `bson:"description" json:"description,omitempty"`
-	WhatToExpect    []string           `bson:"what_to_expect" json:"what_to_expect"`
-	Rules           []string           `bson:"rules" json:"rules"`
+	WhatToExpect    map[string]string  `bson:"what_to_expect" json:"what_to_expect"`
+	Rules           map[string]string  `bson:"rules" json:"rules"`
 	CreatedAt       time.Time          `bson:"created_at" Usage:"datetime" json:"created_at"`
 	UpdatedAt       time.Time          `bson:"updated_at" Usage:"datetime" json:"updated_at"`
 }

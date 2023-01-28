@@ -57,6 +57,7 @@ func main() {
 	gin.SetMode(gin.ReleaseMode)
 	
 	router := gin.New()
+
 	err = router.SetTrustedProxies([]string{"127.0.0.1"})
 	
 

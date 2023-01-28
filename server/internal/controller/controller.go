@@ -189,11 +189,11 @@ func (op *Operator) ProcessLogin() gin.HandlerFunc {
 
 				ctx.SetCookie("authorization", t1, 60*60*24*7, "/", "localhost", false, true)
 				ctx.JSON(http.StatusOK, gin.H{
-					"message":      "Welcome to user homepage",
-					"email":        email,
-					"id":           id,
-					"company_name": compName,
-					"session_token" : t1,
+					"message":       "Welcome to user homepage",
+					"email":         email,
+					"id":            id,
+					"company_name":  compName,
+					"session_token": t1,
 				})
 			case !verified:
 				ctx.JSON(http.StatusUnauthorized, gin.H{"message": "Incorrect login details"})
@@ -231,6 +231,43 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 		CreatedAt, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 		UpdatedAt, _ := time.Parse(time.RFC3339, time.Now().Format(time.RFC3339))
 
+		imgMap := make(map[string]any)
+
+		multiForm, err := ctx.MultipartForm()
+		if err != nil {
+			ctx.AbortWithError(http.StatusInternalServerError, err)
+		}
+
+		imgForm, ok := multiForm.File["tour_images"]
+		if !ok {
+			ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot upload images"))
+			ctx.JSON(http.StatusInternalServerError, "error while uploading images")
+			return
+		}
+		for i, file := range imgForm {
+			log.Println(file.Filename)
+			x := fmt.Sprintf("image_%v", i)
+			imgMap[x] = file
+			if i > 5 {
+				break
+			}
+		}
+
+		wte := []string{ctx.Request.FormValue("what_to_expect")}
+		whatToExpect := make(map[string]string)
+		for x, y := range wte {
+			key := fmt.Sprintf("what_to_expect_%v", x)
+			whatToExpect[key] = y
+
+		}
+
+		rules := []string{ctx.Request.FormValue("rules")}
+		rulesMap := make(map[string]string)
+		for x, y := range rules {
+			key := fmt.Sprintf("rule_%v", x)
+			rulesMap[key] = y
+		}
+
 		tour := &model.Tour{
 			ID:              primitive.NewObjectID(),
 			OperatorID:      userInfo.ID,
@@ -241,12 +278,13 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 			StartDate:       ctx.Request.FormValue("start_date"),
 			EndDate:         ctx.Request.FormValue("end_date"),
 			Price:           ctx.Request.FormValue("price"),
+			Image:           imgMap,
 			Contact:         ctx.Request.FormValue("contact"),
 			Language:        ctx.Request.FormValue("language"),
 			NumberOfTourist: ctx.Request.FormValue("number_of_tourists"),
 			Description:     ctx.Request.FormValue("description"),
-			WhatToExpect:    append([]string{}, ctx.Request.FormValue("what_to_expect")),
-			Rules:           append([]string{}, ctx.Request.FormValue("rules")),
+			WhatToExpect:    whatToExpect,
+			Rules:           rulesMap,
 			CreatedAt:       CreatedAt,
 			UpdatedAt:       UpdatedAt,
 		}
@@ -267,13 +305,13 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 			return
 		}
 
-		_, err := op.DB.InsertPackage(tour)
+		_, err = op.DB.InsertPackage(tour)
 		if err != nil {
 			_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
 			return
 		}
 
-		ctx.JSONP(http.StatusCreated, gin.H{"Message": "new tour package created"})
+		ctx.JSON(http.StatusCreated, gin.H{"Message": "New package added successfully"})
 	}
 }
 

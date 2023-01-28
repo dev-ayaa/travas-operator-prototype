@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Footer from "../Footer";
 import ScrollToTop from "../ScrollToTop";
 
-export default function Step3() {
+export default function Step3({ joinRules, handleRuleChange, rules }) {
   return (
     <>
       <div className="pt-[100px] md:pt-[120px] w-[90%] px-1 mx-auto md:w-full md:mx-0 md:px-[80px] pb-20">
@@ -59,18 +59,27 @@ export default function Step3() {
               <input
                 className="border-b-2 focus:outline-none pl-2 pb-2 placeholder:text-xs"
                 placeholder="Guideline 1"
+                value={rules.rule_1 ? rules.rule_1 : ""}
+                id="rule_1"
+                onChange={handleRuleChange}
               />
             </div>
             <div>
               <input
                 className="border-b-2 focus:outline-none pl-2 pb-2 placeholder:text-xs"
                 placeholder="Guideline 2"
+                value={rules.rule_2 ? rules.rule_2 : ""}
+                id="rule_2"
+                onChange={handleRuleChange}
               />
             </div>
             <div>
               <input
                 className="border-b-2 focus:outline-none pl-2 pb-2 placeholder:text-xs"
                 placeholder="Guideline 3"
+                value={rules.rule_3 ? rules.rule_3 : ""}
+                id="rule_3"
+                onChange={handleRuleChange}
               />
             </div>
           </div>
@@ -81,12 +90,18 @@ export default function Step3() {
               <input
                 className="border-b-2 focus:outline-none pl-2 pb-2 placeholder:text-xs"
                 placeholder="Guideline 4"
+                value={rules.rule_4 ? rules.rule_4 : ""}
+                id="rule_4"
+                onChange={handleRuleChange}
               />
             </div>
             <div>
               <input
                 className="border-b-2 focus:outline-none pl-2 pb-2 placeholder:text-xs"
                 placeholder="Guideline 5"
+                value={rules.rule_5 ? rules.rule_5 : ""}
+                id="rule_5"
+                onChange={handleRuleChange}
               />
             </div>
           </div>
@@ -125,15 +140,16 @@ export default function Step3() {
               Back
             </button>
           </Link>
-          <Link to="/preview">
-            <button className="bg-[#1F66D0] text-white font-semibold px-12 py-3 md:px-24">
-              Submit
-            </button>
-          </Link>
+          <button
+            className="bg-[#1F66D0] text-white font-semibold px-12 py-3 md:px-24"
+            onClick={joinRules}
+          >
+            Preview
+          </button>
         </div>
+        <ScrollToTop />
       </div>
       <Footer />
-      <ScrollToTop />
     </>
   );
 }

@@ -93,6 +93,18 @@ const Sidebar = ({ currentPage, logout }) => {
               Product Feedback
             </li>
           </Link>
+          <Link to="/">
+            <li
+              id="home"
+              className={`w-[90%] mb-6 py-3 px-12 cursor-pointer ${
+                currentPage === "/"
+                  ? "bg-white border-slate-600"
+                  : "bg-gray-200 border-gray-200"
+              } hover:bg-white hover:border-slate-600 border rounded-r-2xl`}
+            >
+              Homepage
+            </li>
+          </Link>
           <li
             onClick={logout}
             className={`w-[90%] mb-8 py-3 px-12 cursor-pointer bg-gray-200 border-gray-200 hover:bg-white hover:border-slate-600 border rounded-r-2xl`}
@@ -194,6 +206,18 @@ const Sidebar = ({ currentPage, logout }) => {
                 } hover:bg-white hover:border-slate-600 border rounded-r-2xl`}
               >
                 Product Feedback
+              </li>
+            </Link>
+            <Link to="/">
+              <li
+                id="home"
+                className={`w-[70%] mb-8 py-3 px-12 cursor-pointer ${
+                  currentPage === "/"
+                    ? "bg-white border-slate-600"
+                    : "bg-gray-200 border-gray-200"
+                } hover:bg-white hover:border-slate-600 border rounded-r-2xl`}
+              >
+                Homepage
               </li>
             </Link>
             <li

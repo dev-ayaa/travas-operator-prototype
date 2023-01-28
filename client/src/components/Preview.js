@@ -3,14 +3,16 @@ import { Link } from "react-router-dom";
 import Footer from "../Footer";
 import ScrollToTop from "../ScrollToTop";
 
-export default function Preview() {
+export default function Preview({ tourPackageData }) {
   return (
     <>
       <div className="pt-[100px] md:pt-[120px] w-[90%] px-1 mx-auto md:w-full md:mx-0 md:px-[80px] pb-20">
-        <div className="flex items-center space-x-4">
-          <img className="w-[16px]" src="/images/arrow.svg" alt="arrow" />
-          <p>Preview</p>
-        </div>
+        <Link to="/step3">
+          <div className="flex items-center space-x-4">
+            <img className="w-[16px]" src="/images/arrow.svg" alt="arrow" />
+            <p>Preview</p>
+          </div>
+        </Link>
 
         <p className="font-light pt-10">
           Check through the information you provided, carefully before
@@ -22,65 +24,67 @@ export default function Preview() {
           <div className="space-y-3">
             <div>
               <h3 className="font-medium">Tour title:</h3>
-              <p className="font-light">The Hiking Lord</p>
+              <p className="font-light">{tourPackageData.title}</p>
             </div>
             <div>
               <h3 className="font-medium">Meeting point:</h3>
-              <p className="font-light">
-                Idere motor park, Ondo state, Nigeria
-              </p>
+              <p className="font-light">{tourPackageData.meeting_point}</p>
             </div>
             <div>
               <h3 className="font-medium">Duration:</h3>
-              <p className="font-light">23 - 26th September 2022</p>
+              <p className="font-light">
+                From {tourPackageData.start_date} till{" "}
+                {tourPackageData.end_date}
+              </p>
             </div>
             <div>
               <h3 className="font-medium">Maximum:</h3>
-              <p className="font-light">80 persons</p>
+              <p className="font-light">
+                {tourPackageData.number_of_tourists} persons
+              </p>
             </div>
           </div>
           {/* right grid */}
           <div className="space-y-3">
             <div>
               <h3 className="font-medium">Destination:</h3>
-              <p className="font-light">
-                Idere hills, Idere, Ondo state, Nigeria
-              </p>
+              <p className="font-light">{tourPackageData.destination}</p>
             </div>
             <div>
               <h3 className="font-medium">Start time:</h3>
-              <p className="font-light">8:00 AM</p>
+              <p className="font-light">{tourPackageData.start_time}</p>
             </div>
             <div>
               <h3 className="font-medium">Price:</h3>
-              <p className="font-light">NGN 10,000</p>
+              <p className="font-light">NGN {tourPackageData.price}</p>
             </div>
           </div>
         </div>
         {/* Itinerary */}
         <div className="mt-10">
-          <h3 className="font-medium">Itinerary:</h3>
-          <p className="font-light pt-4">
-            Lorem ispum et tu, Lorem ispum et tu,Lorem ispum et tu, Lorem ispum
-            et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu,
-            Lorem ispum et tu, Lorem ispum et tu , Lorem ispum et tu, Lorem
-            ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et
-            tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem
-            ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et
-            tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem
-            ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et
-            tu, v, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu, v,
-            v, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu Read more
-          </p>
+          <h3 className="font-medium">Description:</h3>
+          <p className="font-light pt-4">{tourPackageData.description}</p>
         </div>
 
         {/* What to expect */}
         <div className="mt-10">
           <h3 className="font-medium">What to expect:</h3>
           <ul className="font-light pt-4">
-            <li>Luxury accomodation</li>
-            <li>Tasty snacks and cold drinks</li>
-            <li>Interesting knowledgeable and caring guide</li>
+            {tourPackageData.what_to_expect.what_to_expect_1 && (
+              <li>{tourPackageData.what_to_expect.what_to_expect_1}</li>
+            )}
+            {tourPackageData.what_to_expect.what_to_expect_2 && (
+              <li>{tourPackageData.what_to_expect.what_to_expect_2}</li>
+            )}
+            {tourPackageData.what_to_expect.what_to_expect_3 && (
+              <li>{tourPackageData.what_to_expect.what_to_expect_3}</li>
+            )}
+            {tourPackageData.what_to_expect.what_to_expect_4 && (
+              <li>{tourPackageData.what_to_expect.what_to_expect_4}</li>
+            )}
+            {tourPackageData.what_to_expect.what_to_expect_5 && (
+              <li>{tourPackageData.what_to_expect.what_to_expect_5}</li>
+            )}
           </ul>
         </div>
 
@@ -88,12 +92,16 @@ export default function Preview() {
         <div className="mt-10">
           <h3 className="font-medium">Tour photos</h3>
           <div className="flex items-center flex-wrap gap-4 pt-4 w-[100%]">
-            <img src="/images/tour-photo-1.svg" alt="tour" className="" />
-            <img src="/images/tour-photo-2.svg" alt="tour" />
-            <img src="/images/tour-photo-3.svg" alt="tour" />
-            <img src="/images/tour-photo-4.svg" alt="tour" />
-            <img src="/images/tour-photo-5.svg" alt="tour" />
-            <img src="/images/tour-photo-6.svg" alt="tour" />
+            {tourPackageData.tour_photos?.map((item, index) => {
+              return (
+                <img
+                  key={index}
+                  src={item.tour_photo}
+                  alt="tour"
+                  className="w-[100px] h-[100px] rounded-md object-cover object-center"
+                />
+              );
+            })}
           </div>
         </div>
 
@@ -101,8 +109,21 @@ export default function Preview() {
         <div className="mt-10">
           <h3 className="font-medium">Guidelines:</h3>
           <ul className="font-light pt-4">
-            <li>Not wheelchair accessable</li>
-            <li>Not suitable for pregnant women</li>
+            {tourPackageData.rules.rule_1 && (
+              <li>{tourPackageData.rules.rule_1}</li>
+            )}
+            {tourPackageData.rules.rule_2 && (
+              <li>{tourPackageData.rules.rule_2}</li>
+            )}
+            {tourPackageData.rules.rule_3 && (
+              <li>{tourPackageData.rules.rule_3}</li>
+            )}
+            {tourPackageData.rules.rule_4 && (
+              <li>{tourPackageData.rules.rule_4}</li>
+            )}
+            {tourPackageData.rules.rule_5 && (
+              <li>{tourPackageData.rules.rule_5}</li>
+            )}
           </ul>
         </div>
 
@@ -125,7 +146,7 @@ export default function Preview() {
         <div className="md:w-[50%] mx-auto mt-20 border-2 font-light text-sm py-2.5 pl-3 pr-5 space-y-2">
           <p className="font-medium">Note</p>
           <p>
-            This tour package would be reviewed before being accepted an the
+            This tour package would be reviewed before being accepted on the
             Travas touurist platform
           </p>
           <p>This may take up to three(3) working days</p>
@@ -144,9 +165,9 @@ export default function Preview() {
             </button>
           </Link>
         </div>
+        <ScrollToTop />
       </div>
       <Footer />
-      <ScrollToTop />
     </>
   );
 }
