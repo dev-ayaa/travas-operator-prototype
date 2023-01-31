@@ -9,4 +9,3 @@ services:
     rootDir: travas-operator-prototype
     dockerCommand: ./run.sh
     numInstances: 1
-    heathCheckPath: /
