@@ -176,6 +176,14 @@ func (op *Operator) ProcessLogin() gin.HandlerFunc {
 					_ = ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("token no generated : %v ", err))
 				}
 
+				cookieData.Set("token",t1)
+
+				if err := cookieData.Save(); err != nil {
+					log.Println("error from the session storage")
+					_ = ctx.AbortWithError(http.StatusNotFound, gin.Error{Err: err})
+					return
+				}
+
 				// var tk map[string]string
 				tk := map[string]string{"t1": t1, "t2": t2}
 
@@ -187,7 +195,6 @@ func (op *Operator) ProcessLogin() gin.HandlerFunc {
 					return
 				}
 
-				ctx.SetCookie("authorization", t1, 60*60*24*7, "/", "localhost", false, true)
 				ctx.JSON(http.StatusOK, gin.H{
 					"message":       "Welcome to user homepage",
 					"email":         email,
@@ -233,6 +240,7 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 
 		imgMap := make(map[string]any)
 
+		ctx.Writer.Header().Set("Content-Type", "multipart/form-data")
 		multiForm, err := ctx.MultipartForm()
 		if err != nil {
 			ctx.AbortWithError(http.StatusInternalServerError, err)
@@ -245,7 +253,6 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 			return
 		}
 		for i, file := range imgForm {
-			log.Println(file.Filename)
 			x := fmt.Sprintf("image_%v", i)
 			imgMap[x] = file
 			if i > 5 {
