@@ -10,7 +10,7 @@ export default function Step3({ joinRules, handleRuleChange, rules }) {
         <Link to="/step2">
           <div className="flex items-center space-x-4">
             <img className="w-[16px]" src="/images/arrow.svg" alt="arrow" />
-            <p>Step 2</p>
+            <p>Back to step 2</p>
           </div>
         </Link>
         {/* progress ball 2 */}
@@ -117,7 +117,7 @@ export default function Step3({ joinRules, handleRuleChange, rules }) {
         </div>
 
         {/* Assign budget */}
-        <div className="flex justify-start mt-24 space-x-6">
+        <div className="flex justify-start mt-12 space-x-6">
           <button className="bg-[#1F66D0] text-white font-semibold py-2 px-12 flex items-center shadow-md">
             Assign
             <span className="pl-4">
@@ -127,11 +127,11 @@ export default function Step3({ joinRules, handleRuleChange, rules }) {
         </div>
 
         {/* Invite */}
-        <div className="pt-16">
+        {/* <div className="pt-16">
           <a className="text-[#1F66D0] text-sm font-medium" href="/">
             Invite a new guide
           </a>
-        </div>
+        </div> */}
 
         {/* Back and submit button */}
         <div className="flex sm:justify-end justify-between mt-24 space-x-6">

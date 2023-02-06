@@ -4,10 +4,26 @@ import Footer from "./Footer";
 import Header from "./Header";
 import ScrollToTop from "./ScrollToTop";
 
-const Main = ({ isLoggedIn, logout }) => {
+const Main = ({ isLoggedIn, logout, loggedOut, closeUserMod }) => {
   return (
     <>
       <Header isLoggedIn={isLoggedIn} logout={logout} />
+      {loggedOut && (
+        <div className="bg-white w-[fit-content] px-10 py-6 mx-5 mt-[80px] z-0 md:mt-0 border border-green-500 rounded-xl md:fixed md:right-10 md:top-[100px] relative flex gap-4 items-center">
+          <img
+            className="w-[20px] h-[20px] cursor-pointer absolute top-[15px] right-[15px]"
+            alt=""
+            src="/images/icons8-close-50.png"
+            onClick={closeUserMod}
+          />
+          <img
+            alt=""
+            src="/images/icons8-checkmark-64.png"
+            className="w-10 h-10"
+          />
+          <p>Logged out!</p>
+        </div>
+      )}
       <div className="pt-[90px] px-[5%]">
         <div className="flex items-center space-x-4">
           <img src="/images/nigeria-heart-flag.svg" alt="nigeria-heart-flag" />

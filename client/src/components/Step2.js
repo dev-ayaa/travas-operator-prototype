@@ -21,7 +21,7 @@ function Step2({
         <Link to="/step1">
           <div className="flex items-center space-x-4">
             <img className="w-[16px]" src="/images/arrow.svg" alt="arrow" />
-            <p>Step 1</p>
+            <p>Back to step 1</p>
           </div>
         </Link>
         {/* progress ball 2 */}

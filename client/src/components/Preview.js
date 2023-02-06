@@ -2,11 +2,18 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Footer from "../Footer";
 import ScrollToTop from "../ScrollToTop";
+import Loader from "./Loader";
 
-export default function Preview({ tourPackageData }) {
+export default function Preview({
+  tourPackageData,
+  submitTourPackage,
+  showLoader,
+}) {
   return (
     <>
       <div className="pt-[100px] md:pt-[120px] w-[90%] px-1 mx-auto md:w-full md:mx-0 md:px-[80px] pb-20">
+        {showLoader && <Loader />}
+
         <Link to="/step3">
           <div className="flex items-center space-x-4">
             <img className="w-[16px]" src="/images/arrow.svg" alt="arrow" />
@@ -154,16 +161,17 @@ export default function Preview({ tourPackageData }) {
 
         {/* Edit and submit button */}
         <div className="flex sm:justify-end justify-between mt-24 space-x-6">
-          <Link to="/step3">
+          <Link to="/step1">
             <button className="text-[#1F66D0] bg-white border border-[#1F66D0] font-semibold px-12 py-3 md:px-24">
               Edit
             </button>
           </Link>
-          <Link to="/dashboard">
-            <button className="bg-[#1F66D0] text-white font-semibold px-12 py-3 md:px-24">
-              Submit
-            </button>
-          </Link>
+          <button
+            onClick={submitTourPackage}
+            className="bg-[#1F66D0] text-white font-semibold px-12 py-3 md:px-24"
+          >
+            Submit
+          </button>
         </div>
         <ScrollToTop />
       </div>

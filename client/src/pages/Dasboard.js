@@ -10,6 +10,9 @@ const Dashboard = ({
   loginSuccess,
   closeUserMod,
   userData,
+  addTourPackage,
+  packageCreated,
+  packageMssg,
 }) => {
   return (
     <div className="w-full">
@@ -19,7 +22,7 @@ const Dashboard = ({
         logout={logout}
       />
       {loginSuccess && (
-        <div className="bg-white px-10 py-6 mx-5 mt-[80px] md:mt-0 md:mr-16 border border-green-500 rounded-xl md:float-right relative flex gap-4 items-center">
+        <div className="bg-white w-[fit-content] px-10 py-6 mx-5 mt-[80px] z-0 md:mt-0 border border-green-500 rounded-xl md:fixed md:right-10 md:top-10 relative flex gap-4 items-center">
           <img
             className="w-[20px] h-[20px] cursor-pointer absolute top-[15px] right-[15px]"
             alt=""
@@ -31,7 +34,23 @@ const Dashboard = ({
             src="/images/icons8-checkmark-64.png"
             className="w-10 h-10"
           />
-          <p>Login Successful!</p>
+          <p>Login Successful</p>
+        </div>
+      )}
+      {packageCreated && (
+        <div className="bg-white w-[fit-content] px-10 py-6 mx-5 mt-[80px] z-0 md:mt-0 border border-green-500 rounded-xl md:fixed md:right-10 md:top-10 relative flex gap-4 items-center">
+          <img
+            className="w-[20px] h-[20px] cursor-pointer absolute top-[15px] right-[15px]"
+            alt=""
+            src="/images/icons8-close-50.png"
+            onClick={closeUserMod}
+          />
+          <img
+            alt=""
+            src="/images/icons8-checkmark-64.png"
+            className="w-10 h-10"
+          />
+          <p>{packageMssg}</p>
         </div>
       )}
       <div
@@ -98,11 +117,12 @@ const Dashboard = ({
 
           <div className="w-full flex justify-between mt-8 mb-16 md:md-0">
             <h1 className="font-bold text-[1.25rem]">Tour Packages</h1>
-            <Link to="/step1">
-              <button className="bg-blue-500 hover:bg-blue-400 text-white rounded-md p-3">
-                Create new package
-              </button>
-            </Link>
+            <button
+              onClick={addTourPackage}
+              className="bg-blue-500 hover:bg-blue-400 text-white rounded-md p-3"
+            >
+              Create new package
+            </button>
           </div>
 
           <div className="my-10 text-center">
@@ -112,9 +132,12 @@ const Dashboard = ({
               className="w-[180px] h-auto mx-auto mb-5"
             />
             <p className="text-gray-500">No packages yet</p>
-            <Link to="/step1">
-              <p className="mt-4 text-blue-500 font-bold">Create new package</p>
-            </Link>
+            <p
+              className="mt-4 text-blue-500 font-bold"
+              onClick={addTourPackage}
+            >
+              Create new package
+            </p>
           </div>
 
           <div className="w-full h-[fit-content] md:h-[80px] flex gap-4 mt-6">

@@ -246,12 +246,13 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 			ctx.AbortWithError(http.StatusInternalServerError, err)
 		}
 
-		imgForm, ok := multiForm.File["tour_images"]
-		if !ok {
-			ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot upload images"))
-			ctx.JSON(http.StatusInternalServerError, "error while uploading images")
-			return
-		}
+		// imgForm := 
+		imgForm, _ := multiForm.File["tour_images"]
+		// if !ok {
+		// 	ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot upload images"))
+		// 	ctx.JSON(http.StatusInternalServerError, "error while uploading images")
+		// 	return
+		// }
 		for i, file := range imgForm {
 			x := fmt.Sprintf("image_%v", i)
 			imgMap[x] = file

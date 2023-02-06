@@ -115,7 +115,7 @@ const Sidebar = ({ currentPage, logout }) => {
       </div>
 
       {/* mobile nav */}
-      <div className="w-full h-[60px] fixed top-0 left-0 bg-white flex md:hidden justify-between items-center px-4 shadow-md">
+      <div className="w-full h-[60px] fixed top-0 left-0 bg-white flex md:hidden justify-between items-center px-4 shadow-md z-50">
         <img
           alt=""
           src="/images/Travas Logo.png"
