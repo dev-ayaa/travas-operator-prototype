@@ -15,8 +15,6 @@ import (
 
 var app config.Tools
 
-// var uri = os.Getenv("TRAVAS_DB_URI")
-
 func SetConnection(uri string) (*mongo.Client, error) {
 	serverAPIOptions := options.ServerAPI(options.ServerAPIVersion1)
 
@@ -25,7 +23,7 @@ func SetConnection(uri string) (*mongo.Client, error) {
 
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri).SetServerAPIOptions(serverAPIOptions))
 	if err != nil {
-	log.Panicln(err)
+		log.Panicln(err)
 	}
 
 	err = client.Ping(ctx, nil)
@@ -56,7 +54,7 @@ func OpenConnection() *mongo.Client {
 			return nil
 		}
 
-	log.Println("Trying to reconnect MongoDB database ...")
+		log.Println("Trying to reconnect MongoDB database ...")
 		time.Sleep(5 * time.Second)
 		continue
 	}

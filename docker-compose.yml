@@ -8,22 +8,17 @@ services:
     volumes:
       - /app/node_modules
       - ./client:/app
-    # environment:
-    #   #Fixes bug where websocket connection is fixed to default port 3000
-    #   - WDS_SOCKET_PORT=0
 
   travas-server:
     build:
       dockerfile: Dockerfile.dev
       context: ./server
-    # volumes:
-    # - ./server:/app
     deploy:
       mode: replicated
       replicas: 1
     restart: always
 
-  nginx:
+  travas-nginx:
     build:
       context: ./nginx
       dockerfile: Dockerfile.dev

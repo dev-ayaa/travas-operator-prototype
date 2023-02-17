@@ -1,0 +1,35 @@
+sudo : required
+services:
+  - docker
+
+before_install:
+  - docker build -t travastech/travas-client -f ./client/Dockerfile.dev ./client/
+
+script:
+  - docker run travastech/travas-server go test -- --coverage
+
+# Building the production version for the services images
+after_success:
+  - docker build -t travastech/travas-client ./client
+  - docker build -t travastech/travas-server ./server
+  - docker build -t travastech/travas-nginx ./nginx
+
+  # Log id to the docker cli in one command
+  - echo "$DOCKER_PASSWORD" | docker login -u  "$DOCKER_ID" --password-stdin
+  # Push all built images to docker hub
+  - docker push travastech/travas-client
+  - docker push travastech/travas-server
+  - docker push travastech/travas-nginx
+deploy:
+  provider: elasticbeanstalk
+  region: us-west-2
+  app: travas-operator-app
+  env: Travasoperatorapp-env
+  bucket_name: elasticbeanstalk-us-west-2-647516275691
+  # bucket_path: 
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key:
+    secure: $AWS_SECRET_KEY
+

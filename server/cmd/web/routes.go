@@ -27,8 +27,10 @@ func Routes(r *gin.Engine, o controller.Operator) {
 	{
 		authRouter.POST("/verify/documents", o.VerifyDocument())
 
+		// authRouter.GET("/dashboard", o.Dashboard())
 		authRouter.GET("/create/packages", o.TourPackagePage())
 		authRouter.POST("/add/packages", o.ProcessTourPackage())
+
 		authRouter.GET("/guide/load", o.GetTourGuide())
 		authRouter.GET("/guide/select/assign", o.SelectTourGuide())
 		authRouter.POST("/guide/select/delete/:id", o.DeleteTourGuide())

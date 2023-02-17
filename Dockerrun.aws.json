@@ -1,0 +1,33 @@
+{
+    "AWSEDDockerrunVersion": 2,
+    "containerDefinitions": [
+        {
+            "name": "travas-client",
+            "image": "travastech/travas-client",
+            "hostname": "travas-client",
+            "essential": false
+        },
+        {
+            "name": "travas-server",
+            "image": "travastech/travas-server",
+            "hostname": "travas-server",
+            "essential": false
+        },
+        {
+            "name": "travas-nginx",
+            "image": "travastech/travas-nginx",
+            "hostname": "travas-nginx",
+            "essential": true,
+            "portMappings": [
+                {
+                    "hostPort": 80,
+                    "containerPort": 80
+                }
+            ],
+            "links": [
+                "travas-client",
+                "travas-server"
+            ]
+        }
+    ]
+}

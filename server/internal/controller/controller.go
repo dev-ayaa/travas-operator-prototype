@@ -176,7 +176,7 @@ func (op *Operator) ProcessLogin() gin.HandlerFunc {
 					_ = ctx.AbortWithError(http.StatusInternalServerError, fmt.Errorf("token no generated : %v ", err))
 				}
 
-				cookieData.Set("token",t1)
+				cookieData.Set("token", t1)
 
 				if err := cookieData.Save(); err != nil {
 					log.Println("error from the session storage")
@@ -220,8 +220,18 @@ func (op *Operator) VerifyDocument() gin.HandlerFunc {
 	}
 }
 
+// Dashboard : this will help load up and process all the user details,information and all the
+// necessary data need in the user menu
+func (op *Operator) Dashboard() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+
+		ctx.JSONP(http.StatusOK, gin.H{})
+	}
+}
+
 func (op *Operator) TourPackagePage() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
+
 		ctx.JSONP(http.StatusOK, gin.H{})
 	}
 }
@@ -243,16 +253,15 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 		ctx.Writer.Header().Set("Content-Type", "multipart/form-data")
 		multiForm, err := ctx.MultipartForm()
 		if err != nil {
-			ctx.AbortWithError(http.StatusInternalServerError, err)
+			_ = ctx.AbortWithError(http.StatusInternalServerError, err)
 		}
 
-		// imgForm := 
-		imgForm, _ := multiForm.File["tour_images"]
-		// if !ok {
-		// 	ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot upload images"))
-		// 	ctx.JSON(http.StatusInternalServerError, "error while uploading images")
-		// 	return
-		// }
+		imgForm, ok := multiForm.File["tour_images"]
+		if !ok {
+			_ = ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot upload images"))
+			ctx.JSON(http.StatusInternalServerError, "error while uploading images")
+			return
+		}
 		for i, file := range imgForm {
 			x := fmt.Sprintf("image_%v", i)
 			imgMap[x] = file
@@ -319,10 +328,13 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 			return
 		}
 
-		ctx.JSON(http.StatusCreated, gin.H{"Message": "New package added successfully"})
+		ctx.JSON(http.StatusCreated, gin.H{
+			"message": "New package added successfully",
+		})
 	}
 }
 
+// PreviewTour : this handler will handle the request to preview tour package that is recently created
 func (op *Operator) PreviewTour() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		cookieData := sessions.Default(ctx)
