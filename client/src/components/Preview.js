@@ -99,11 +99,11 @@ export default function Preview({
         <div className="mt-10">
           <h3 className="font-medium">Tour photos</h3>
           <div className="flex items-center flex-wrap gap-4 pt-4 w-[100%]">
-            {tourPackageData.tour_photos?.map((item, index) => {
+            {tourPackageData.tour_image?.map((item, index) => {
               return (
                 <img
                   key={index}
-                  src={item.tour_photo}
+                  src={Object.values(item)[0]}
                   alt="tour"
                   className="w-[100px] h-[100px] rounded-md object-cover object-center"
                 />

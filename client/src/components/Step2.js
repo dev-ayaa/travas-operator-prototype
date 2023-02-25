@@ -225,7 +225,7 @@ function Step2({
                       </div>
                     )}
                     <img
-                      src={item.tour_photo}
+                      src={Object.values(item)[0]}
                       alt="tour"
                       className="w-[100px] h-[100px] rounded-md object-cover object-center"
                     />
@@ -244,21 +244,9 @@ function Step2({
                 </div>
               </div>
             )}
-
-            {/* {tourPhotos === [] && (
-              <div className="border border-[#B6B1B1] rounded-xl p-5">
-                <p className="font-light text-sm mb-2">
-                  Uploaded photos will display here
-                </p>
-                <div className="flex gap-4">
-                  <div className="w-[100px] h-[100px] rounded-md bg-[#B6B1B1]/20"></div>
-                  <div className="w-[100px] h-[100px] rounded-md bg-[#B6B1B1]/20"></div>
-                  <div className="w-[100px] h-[100px] rounded-md bg-[#B6B1B1]/20"></div>
-                </div>
-              </div>
-            )} */}
           </div>
-          {/* buttons */}
+
+          {/* image input */}
           <div className="flex space-x-6 pt-8">
             <input
               type="file"
@@ -267,7 +255,6 @@ function Step2({
             />
           </div>
         </div>
-        {/* Back and next button */}
 
         <div className="flex sm:justify-end justify-between mt-24 space-x-6">
           <Link to="/step1">
