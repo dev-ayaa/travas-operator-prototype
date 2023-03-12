@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
+import Loader from "../components/Loader";
 import Sidebar from "../components/Sidebar";
+import TourPackageCard from "../components/TourPackageCard";
 import Footer from "../Footer";
 import ScrollToTop from "../ScrollToTop";
 
@@ -13,9 +15,14 @@ const Dashboard = ({
   addTourPackage,
   packageCreated,
   packageMssg,
+  showLoader,
+  errorTpFetch,
+  tourPackageFromDb,
 }) => {
+  // console.log(tourPackageFromDb);
   return (
     <div className="w-full">
+      {showLoader && <Loader />}
       <Sidebar
         currentPage={currentPage}
         handleCurrentPage={handleCurrentPage}
@@ -24,7 +31,7 @@ const Dashboard = ({
       {loginSuccess && (
         <div className="bg-white w-[fit-content] px-10 py-6 mx-5 mt-[80px] z-0 md:mt-0 border border-green-500 rounded-xl md:fixed md:right-10 md:top-10 relative flex gap-4 items-center">
           <img
-            className="w-[20px] h-[20px] cursor-pointer absolute top-[15px] right-[15px]"
+            className="w-[15px] h-[15px] cursor-pointer absolute top-[15px] right-[15px]"
             alt=""
             src="/images/icons8-close-50.png"
             onClick={closeUserMod}
@@ -40,7 +47,7 @@ const Dashboard = ({
       {packageCreated && (
         <div className="bg-white w-[fit-content] px-10 py-6 mx-5 mt-[80px] z-0 md:mt-0 border border-green-500 rounded-xl md:fixed md:right-10 md:top-10 relative flex gap-4 items-center">
           <img
-            className="w-[20px] h-[20px] cursor-pointer absolute top-[15px] right-[15px]"
+            className="w-[15px] h-[15px] cursor-pointer absolute top-[15px] right-[15px]"
             alt=""
             src="/images/icons8-close-50.png"
             onClick={closeUserMod}
@@ -125,19 +132,28 @@ const Dashboard = ({
             </button>
           </div>
 
-          <div className="my-10 text-center">
-            <img
-              alt=""
-              src="/images/undraw_no_data_re_kwbl 1.png"
-              className="w-[180px] h-auto mx-auto mb-5"
-            />
-            <p className="text-gray-500">No packages yet</p>
-            <p
-              className="mt-4 text-blue-500 font-bold"
-              onClick={addTourPackage}
-            >
-              Create new package
-            </p>
+          <div className="w-full min-h-[250px]">
+            {tourPackageFromDb.length < 1 && (
+              <div className="my-10 text-center">
+                <img
+                  alt=""
+                  src="/images/undraw_no_data_re_kwbl 1.png"
+                  className="w-[180px] h-auto mx-auto mb-5"
+                />
+                <p className="text-gray-500">No packages yet</p>
+                <p
+                  className="mt-4 text-blue-500 font-bold"
+                  onClick={addTourPackage}
+                >
+                  Create new package
+                </p>
+              </div>
+            )}
+
+            {tourPackageFromDb.tours?.length > 0 &&
+              tourPackageFromDb.tours?.map((item, index) => {
+                return <TourPackageCard key={index} item={item} />;
+              })}
           </div>
 
           <div className="w-full h-[fit-content] md:h-[80px] flex gap-4 mt-6">

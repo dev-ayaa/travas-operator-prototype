@@ -18,6 +18,9 @@ input::-webkit-input-placeholder {
 }
 
 @layer components {
+  .info {
+    @apply text-start flex gap-2 justify-between sm:block sm:text-center rounded-md w-full sm:w-1/4 sm:border-none border border-gray-300 mb-2 p-1 text-[0.75rem] sm:text-[.9rem];
+  }
   .reg-input {
     @apply bg-[#F5F5F5] text-black text-opacity-50 block pl-4 py-2.5 focus:outline-none rounded-sm w-full;
   }

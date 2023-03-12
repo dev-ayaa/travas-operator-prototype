@@ -6,13 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/travas-io/travas-op/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"io/ioutil"
+	"mime/multipart"
 	"net/http"
+	"path/filepath"
 	"strings"
 )
 
 func (op *Operator) AddTourGuide() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
-		if err := ctx.Request.ParseForm(); err != nil {
+		if err := ctx.Request.ParseMultipartForm(int64(MEMORYMAXSIZE)); err != nil {
 			_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
 		}
 
@@ -23,18 +26,44 @@ func (op *Operator) AddTourGuide() gin.HandlerFunc {
 			_ = ctx.AbortWithError(http.StatusNotFound, errors.New("cannot find operator id"))
 		}
 
+		imageFile := make(map[string]*multipart.FileHeader, 0)
+		form := ctx.Request.MultipartForm
+
+		file, ok := form.File["profile_image"]
+
+		if file[0].Filename != "" {
+			fileByte, err := ioutil.ReadAll(ctx.Request.Body)
+			if err != nil {
+				_ = ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot upload images"))
+				return
+			}
+
+			if len(fileByte) > MEMORYMAXSIZE {
+				_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("image too large"))
+				return
+			}
+
+			ext := filepath.Ext(file[0].Filename)
+			if ext != ".png" && ext != ".jpg" && ext != ".jpeg" {
+				_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid image format"))
+			}
+
+		}
+		imageFile["profile_image"] = file[0]
+
 		tourGuide := &model.TourGuide{
-			OperatorID: userInfo.ID,
-			ID:         primitive.NewObjectID().Hex(),
-			Name:       ctx.Request.Form.Get("guide_name"),
-			Bio:        ctx.Request.Form.Get("bio"),
+			OperatorID:   userInfo.ID,
+			ID:           primitive.NewObjectID().Hex(),
+			Name:         ctx.Request.Form.Get("full_name"),
+			Bio:          ctx.Request.Form.Get("bio"),
+			ProfileImage: imageFile,
 		}
 
 		ok, err := op.DB.InsertTourGuide(tourGuide)
 		if !ok {
 			_ = ctx.AbortWithError(http.StatusInternalServerError, gin.Error{Err: err})
 		}
-		ctx.JSONP(http.StatusOK, gin.H{"message": "New tour guide added"})
+		ctx.JSONP(http.StatusOK, gin.H{"message": "tour guide added"})
 	}
 }
 

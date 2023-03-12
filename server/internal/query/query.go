@@ -13,6 +13,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// INFO --> These files hold the main setup for the database queries methods for operator collection in the database
+//      -->  other collections
+
+
 type OperatorDB struct {
 	App *config.Tools
 	DB  *mongo.Client

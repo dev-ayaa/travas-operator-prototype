@@ -11,7 +11,7 @@ const Main = ({ isLoggedIn, logout, loggedOut, closeUserMod }) => {
       {loggedOut && (
         <div className="bg-white w-[fit-content] px-10 py-6 mx-5 mt-[80px] z-0 md:mt-0 border border-green-500 rounded-xl md:fixed md:right-10 md:top-[100px] relative flex gap-4 items-center">
           <img
-            className="w-[20px] h-[20px] cursor-pointer absolute top-[15px] right-[15px]"
+            className="w-[15px] h-[15px] cursor-pointer absolute top-[15px] right-[15px]"
             alt=""
             src="/images/icons8-close-50.png"
             onClick={closeUserMod}
@@ -75,72 +75,8 @@ const Main = ({ isLoggedIn, logout, loggedOut, closeUserMod }) => {
                   tour requests.
                 </p>
               </div>
-              {/* More Sales */}
-              {/* <div className="space-y-4">
-                <h4 className="text-xl font-semibold">More sales</h4>
-                <p className="md:text-lg">
-                  Lorem ispum et tu, Lorem ispum et tu Lorem ispum et tu, Lorem
-                  ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum
-                  et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu
-                  ,Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu,
-                  Lorem i, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et
-                  tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu,
-                  Lorem ispum et tu, Lorem ispum et tu
-                </p>
-              </div>
-              {/* Tour requests 
-              <div className="space-y-4">
-                <h4 className="text-xl font-semibold">Tour requests</h4>
-                <p className="md:text-lg">
-                  Lorem ispum et tu, Lorem ispum et tu Lorem ispum et tu, Lorem
-                  ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum
-                  et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu
-                  ,Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu,
-                  Lorem i, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et
-                  tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu,
-                  Lorem ispum et tu, Lorem ispum et tu
-                </p>
-              </div>
-              {/* Manage bookings 
-              <div className="space-y-4">
-                <h4 className="text-xl font-semibold">Manage bookings</h4>
-                <p className="font-light md:text-lg">
-                  Lorem ispum et tu, Lorem ispum et tu Lorem ispum et tu, Lorem
-                  ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum
-                  et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu
-                  ,Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu,
-                  Lorem i, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et
-                  tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu,
-                  Lorem ispum et tu, Lorem ispum et tu
-                </p>
-              </div>*/}
             </div>
           </div>
-
-          {/* Price Section 
-          <div className="w-[90%] mx-auto flex flex-col items-start text-white sm:flex-row ">
-            <img src="/images/rectangle.svg" alt="rectangle"></img>
-
-            <div className="sm:pl-6 space-y-12">
-              {/* Pricing 
-              <div className="space-y-4">
-                <h4 className="pt-2 text-xl font-semibold">Pricing</h4>
-                <p className="font-light md:text-lg">
-                  Lorem ispum et tu, Lorem ispum et tu Lorem ispum et tu, Lorem
-                  ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum
-                  et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu
-                  ,Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu,
-                  Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem
-                  ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum
-                  et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et
-                  tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu,
-                  Lorem ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem
-                  ispum et tu, Lorem ispum et tu, Lorem ispum et tu, Lorem ispum
-                  et tu
-                </p>
-              </div>
-            </div>
-          </div> */}
 
           {/* Support Section */}
           <div className="w-[90%] mx-auto flex flex-col items-start text-white sm:flex-row ">

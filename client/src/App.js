@@ -20,6 +20,8 @@ import Withdraw from "./components/Withdraw";
 import SupportUser from "./pages/SupportUser";
 import ProductFeedback from "./pages/ProductFeedback";
 import PageNotFound from "./pages/PageNotFound";
+import FormData from "form-data";
+import AddTourGuide from "./components/AddTourGuide";
 
 function App() {
   //to save reg form input
@@ -125,14 +127,15 @@ function App() {
     setShowLoader(true);
     try {
       const response = await fetch("/api/login", {
+        //change back to /api/login
         method: "POST",
         body: new URLSearchParams(loginForm), //to send as form encoded
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
       });
       const data = await response.json();
-      setUserData(data);
 
       if (response.ok) {
+        setUserData(data);
         setIsLoggedIn(true);
         setLoginSuccess(true);
         setTimeout(() => {
@@ -169,6 +172,10 @@ function App() {
   const logout = async () => {
     localStorage.setItem("isLoggedIn", false);
     localStorage.removeItem("userData");
+    localStorage.removeItem("tourPackages");
+    localStorage.removeItem("tourGuides");
+    setTourPackageFromDb([]);
+
     navigate("/");
     setIsLoggedIn(false);
     setLoggedOut(true);
@@ -185,7 +192,9 @@ function App() {
       return [
         ...prev,
         {
-          [key]: `${URL.createObjectURL(e.target.files[0])}`,
+          [key]: `${(window.URL || window.webkitURL)?.createObjectURL(
+            e.target.files[0]
+          )}`,
           hover: false,
         },
       ];
@@ -372,23 +381,22 @@ function App() {
   const [packageCreated, setPackageCreated] = useState(false);
   const [packageMssg, setPackageMssg] = useState("");
 
-  //to submit tour package form data
   async function submitTourPackage(e) {
     e.preventDefault();
     setShowLoader(true);
 
     const formData = new FormData();
-    formData.set("data", tourPackageData);
+    formData.append("data", JSON.stringify(tourPackageData));
 
-    const boundary = `----${Date.now().toString(16)}`;
     const headers = {
-      "Content-Type": `multipart/form-data; boundary=${boundary}`,
+      Accept: "application/json",
+      "Content-Type": "multipart/form-data",
     };
 
     try {
       const response = await fetch("/api/auth/add/packages", {
         method: "POST",
-        body: formatFormData(formData, boundary),
+        body: formData,
         headers,
       });
       const data = await response.json();
@@ -413,20 +421,6 @@ function App() {
     }
   }
 
-  function formatFormData(formData, boundary) {
-    const body = [];
-    for (const [key, value] of formData) {
-      body.push(`--${boundary}\r\n`);
-      body.push(`Content-Disposition: form-data; name="${key}"\r\n\r\n`);
-      body.push(value instanceof Blob ? value : String(value));
-      body.push("\r\n");
-    }
-    body.push(`--${boundary}--`);
-    return new Blob(body, {
-      type: "multipart/form-data; boundary=" + boundary,
-    });
-  }
-
   // async function submitTourPackage(e) {
   //   e.preventDefault();
   //   setShowLoader(true);
@@ -438,9 +432,6 @@ function App() {
   //     const response = await fetch("/api/auth/add/packages", {
   //       method: "POST",
   //       body: formData,
-  //       headers: {
-  //         "Content-Type": "multipart/form-data",
-  //       },
   //     });
   //     const data = await response.json();
 
@@ -452,7 +443,7 @@ function App() {
   //       }, 10000);
   //       navigate("/dashboard");
   //       window.scrollTo(0, 0);
-  //       console.log(response.status, data, data.message);
+  //       console.log(response.status, data);
   //     } else {
   //       console.error(`Error: (${response.status} ${response.statusText})`);
   //       window.scrollTo(0, 0);
@@ -463,6 +454,196 @@ function App() {
   //     setShowLoader(false);
   //   }
   // }
+
+  //to get tour packages
+  const [tourPackageFromDb, setTourPackageFromDb] = useState(
+    JSON.parse(localStorage.getItem("tourPackages")) || []
+  );
+  const [errorTpFetch, setErrorTpFetch] = useState(null);
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const fetchTourPackageFromDb = async () => {
+        setShowLoader(true);
+
+        try {
+          const response = await fetch("/api/auth/load/packages");
+          const data = await response.json();
+          // console.log(data);
+
+          if (data.message === "No available tour package\n") {
+            return;
+          } else if (data.tours?.length > 0) {
+            setTourPackageFromDb(data);
+            localStorage.setItem("tourPackages", JSON.stringify(data));
+          }
+          if (!response.ok) {
+            setErrorTpFetch("Bad network connection");
+            throw new Error("Network response was not ok");
+          }
+        } catch (error) {
+          setErrorTpFetch(error.message);
+        } finally {
+          setShowLoader(false);
+        }
+      };
+
+      fetchTourPackageFromDb();
+    }
+  }, [isLoggedIn]);
+
+  //to verify identity   //to verify identity   //to verify identity   //to verify identity   //to verify identity   //to verify identity
+  //to verify identity   //to verify identity   //to verify identity   //to verify identity   //to verify identity   //to verify identity
+  //to verify identity   //to verify identity   //to verify identity   //to verify identity   //to verify identity   //to verify identity
+
+  const [verifyformData, setVerifyFormData] = useState({
+    fullName: "",
+    phoneNumber: "",
+    idImage: null,
+    certImage: null,
+  });
+
+  const handleVerifyInputChange = (event) => {
+    const { name, value } = event.target;
+    setVerifyFormData({ ...verifyformData, [name]: value });
+  };
+
+  const handleIdChange = (event) => {
+    const idImage = event.target.files[0];
+    setVerifyFormData({ ...verifyformData, idImage });
+  };
+
+  const handleCertChange = (event) => {
+    const certImage = event.target.files[0];
+    setVerifyFormData({ ...verifyformData, certImage });
+  };
+
+  const handleVerifySubmit = async (event) => {
+    event.preventDefault();
+    setShowLoader(true);
+    const endpoint = "/api/verify/document";
+    const formDataToSend = new FormData();
+    formDataToSend.append("fullName", verifyformData.fullName);
+    formDataToSend.append("phoneNumber", verifyformData.phoneNumber);
+    formDataToSend.append("idImage", verifyformData.idImage);
+    formDataToSend.append("certImage", verifyformData.certImage);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: formDataToSend,
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      const data = await response.json();
+      console.log(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setShowLoader(false);
+    }
+  };
+
+  //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide
+  //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide
+  //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide
+
+  const [tourGuideformData, setTourGuideFormData] = useState({
+    full_name: "",
+    bio: "",
+    profile_image: null,
+    id_card: null,
+  });
+  // console.log(tourGuideformData);
+
+  const handleTourGuideInputChange = (event) => {
+    const { id, value } = event.target;
+    setTourGuideFormData({ ...tourGuideformData, [id]: value });
+  };
+
+  const [displaProfileImage, setDisplayProfileImage] = useState(null);
+  const handlePhotoChange = (event) => {
+    setDisplayProfileImage(URL.createObjectURL(event.target.files[0]));
+    const profile_image = event.target.files[0];
+    setTourGuideFormData({ ...tourGuideformData, profile_image });
+  };
+
+  const handleTourGuideIdChange = (event) => {
+    const id_card = event.target.files[0];
+    setTourGuideFormData({ ...tourGuideformData, id_card });
+  };
+
+  const [trackAddTg, setTrackAddTg] = useState(false);
+  const [tourGuideAdded, setTourGuideAdded] = useState(false);
+  const handleTourGuideSubmit = async (event) => {
+    event.preventDefault();
+    setShowLoader(true);
+    const endpoint = "/api/auth/guide/add";
+    const formDataToSend = new FormData();
+    formDataToSend.append("full_name", tourGuideformData.full_name);
+    formDataToSend.append("bio", tourGuideformData.bio);
+    formDataToSend.append("profile_image", tourGuideformData.profile_image);
+    formDataToSend.append("id_card", tourGuideformData.id_card);
+
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: formDataToSend,
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+      // const data = await response.json();
+      setTrackAddTg((prev) => !prev);
+      setTourGuideAdded(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setShowLoader(false);
+    }
+  };
+
+  function confirmAddedTg() {
+    setTourGuideAdded(false);
+    navigate("/tour-guide");
+    window.location.reload();
+  }
+
+  // to get tour guides
+  const [tourGuideFromDb, setTourGuideFromDb] = useState(
+    JSON.parse(localStorage.getItem("tourGuides")) || []
+  );
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const fetchTourGuideFromDb = async () => {
+        setShowLoader(true);
+
+        try {
+          const response = await fetch("/api/auth/guide/load");
+          const data = await response.json();
+          console.log(data);
+
+          if (data.TourGuides === null) {
+            return;
+          } else if (data.TourGuides !== null) {
+            setTourGuideFromDb(data.TourGuides);
+            localStorage.setItem("tourGuides", JSON.stringify(data.TourGuides));
+          }
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setShowLoader(false);
+        }
+      };
+
+      fetchTourGuideFromDb();
+    }
+  }, [isLoggedIn, trackAddTg]);
 
   return (
     <>
@@ -531,6 +712,9 @@ function App() {
                 addTourPackage={addTourPackage}
                 packageCreated={packageCreated}
                 packageMssg={packageMssg}
+                tourPackageFromDb={tourPackageFromDb}
+                errorTpFetch={errorTpFetch}
+                showLoader={showLoader}
               />
             ) : (
               <Login
@@ -550,12 +734,37 @@ function App() {
           }
         />
         <Route
+          path="/add-tour-guide"
+          element={
+            <AddTourGuide
+              handleTourGuideInputChange={handleTourGuideInputChange}
+              handlePhotoChange={handlePhotoChange}
+              handleTourGuideIdChange={handleTourGuideIdChange}
+              handleTourGuideSubmit={handleTourGuideSubmit}
+              tourGuideformData={tourGuideformData}
+              displaProfileImage={displaProfileImage}
+              showLoader={showLoader}
+              tourGuideAdded={tourGuideAdded}
+              confirmAddedTg={confirmAddedTg}
+            />
+          }
+        />
+        <Route
           path="/tour-request"
           element={<TourRequest currentPage={currentPage} logout={logout} />}
         />
         <Route
           path="/tour-guide"
-          element={<TourGuide currentPage={currentPage} logout={logout} />}
+          element={
+            <TourGuide
+              currentPage={currentPage}
+              logout={logout}
+              tourGuideAdded={tourGuideAdded}
+              closeUserMod={closeUserMod}
+              showLoader={showLoader}
+              tourGuideFromDb={tourGuideFromDb}
+            />
+          }
         />
         <Route
           path="/payment"
@@ -575,7 +784,19 @@ function App() {
             <ProductFeedback currentPage={currentPage} logout={logout} />
           }
         />
-        <Route path="/verify" element={<Verify />} />
+        <Route
+          path="/verify"
+          element={
+            <Verify
+              verifyformData={verifyformData}
+              handleVerifyInputChange={handleVerifyInputChange}
+              handleIdChange={handleIdChange}
+              handleCertChange={handleCertChange}
+              handleVerifySubmit={handleVerifySubmit}
+              showLoader={showLoader}
+            />
+          }
+        />
         <Route
           path="/step1"
           element={
