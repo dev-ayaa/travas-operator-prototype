@@ -187,16 +187,15 @@ function App() {
   //to upload tour photos
   const [tourPhotos, setTourPhotos] = useState([]);
   function handleAddPhotos(e) {
-    let key = `tour_image_${tourPhotos.length + 1}`;
+    // let key = `tour_image_${tourPhotos.length + 1}`;
     setTourPhotos((prev) => {
       return [
         ...prev,
-        {
-          [key]: `${(window.URL || window.webkitURL)?.createObjectURL(
-            e.target.files[0]
-          )}`,
-          hover: false,
-        },
+        e.target.files[0],
+        // {
+        //   [key]: e.target.files[0],
+        //   hover: false,
+        // },
       ];
     });
   }
@@ -215,6 +214,7 @@ function App() {
   function handlePhotoMouseout(index) {
     let photos = [...tourPhotos];
     photos[index].hover = false;
+    delete photos[index].hover;
     setTourPhotos(photos);
   }
 
@@ -373,31 +373,57 @@ function App() {
     setShowPassword((prev) => !prev);
   }
 
-  //create tour package button
-  function addTourPackage() {
-    navigate("/step1");
-  }
-
   const [packageCreated, setPackageCreated] = useState(false);
   const [packageMssg, setPackageMssg] = useState("");
 
-  async function submitTourPackage(e) {
-    e.preventDefault();
+  const submitTourPackage = async (event) => {
+    event.preventDefault();
     setShowLoader(true);
+    const endpoint = "/api/auth/add/packages/test";
+    const formDataToSend = new FormData();
 
-    const formData = new FormData();
-    formData.append("data", JSON.stringify(tourPackageData));
+    formDataToSend.append("title", tourPackageData.title);
+    formDataToSend.append("destination", tourPackageData.destination);
+    formDataToSend.append("meeting_point", tourPackageData.meeting_point);
+    formDataToSend.append("start_time", tourPackageData.start_time);
+    formDataToSend.append("start_date", tourPackageData.start_date);
+    formDataToSend.append("end_date", tourPackageData.end_date);
+    formDataToSend.append("price", tourPackageData.price);
+    formDataToSend.append("language", tourPackageData.language);
+    formDataToSend.append(
+      "number_of_tourists",
+      tourPackageData.number_of_tourists
+    );
+    formDataToSend.append("description", tourPackageData.description);
 
-    const headers = {
-      Accept: "application/json",
-      "Content-Type": "multipart/form-data",
-    };
+    // Add tour image files to FormData object
+    for (let i = 0; i < tourPackageData.tour_image.length; i++) {
+      formDataToSend.append("tour_image[]", tourPackageData.tour_image[i]);
+    }
+
+    // Add what to expect fields to FormData object
+    formDataToSend.append(
+      "what_to_expect[what_to_expect_1]",
+      tourPackageData.what_to_expect.what_to_expect_1
+    );
+    formDataToSend.append(
+      "what_to_expect[what_to_expect_2]",
+      tourPackageData.what_to_expect.what_to_expect_2
+    );
+    formDataToSend.append(
+      "what_to_expect[what_to_expect_3]",
+      tourPackageData.what_to_expect.what_to_expect_3
+    );
+
+    // Add rules fields to FormData object
+    formDataToSend.append("rules[rule_1]", tourPackageData.rules.rule_1);
+    formDataToSend.append("rules[rule_2]", tourPackageData.rules.rule_2);
+    formDataToSend.append("rules[rule_3]", tourPackageData.rules.rule_3);
 
     try {
-      const response = await fetch("/api/auth/add/packages", {
+      const response = await fetch(endpoint, {
         method: "POST",
-        body: formData,
-        headers,
+        body: formDataToSend,
       });
       const data = await response.json();
 
@@ -419,19 +445,25 @@ function App() {
     } finally {
       setShowLoader(false);
     }
-  }
+  };
 
   // async function submitTourPackage(e) {
   //   e.preventDefault();
   //   setShowLoader(true);
 
   //   const formData = new FormData();
-  //   formData.set("data", tourPackageData);
+  //   formData.append("data", JSON.stringify(tourPackageData));
+
+  //   const headers = {
+  //     Accept: "application/json",
+  //     "Content-Type": "multipart/form-data",
+  //   };
 
   //   try {
   //     const response = await fetch("/api/auth/add/packages", {
   //       method: "POST",
   //       body: formData,
+  //       headers,
   //     });
   //     const data = await response.json();
 
@@ -443,7 +475,7 @@ function App() {
   //       }, 10000);
   //       navigate("/dashboard");
   //       window.scrollTo(0, 0);
-  //       console.log(response.status, data);
+  //       console.log(response.status, data, data.message);
   //     } else {
   //       console.error(`Error: (${response.status} ${response.statusText})`);
   //       window.scrollTo(0, 0);
@@ -497,36 +529,39 @@ function App() {
   //to verify identity   //to verify identity   //to verify identity   //to verify identity   //to verify identity   //to verify identity
 
   const [verifyformData, setVerifyFormData] = useState({
-    fullName: "",
-    phoneNumber: "",
-    idImage: null,
-    certImage: null,
+    full_name: "",
+    number: "",
+    id_card: null,
+    certificate: null,
   });
+  // console.log(verifyformData);
 
   const handleVerifyInputChange = (event) => {
-    const { name, value } = event.target;
-    setVerifyFormData({ ...verifyformData, [name]: value });
+    const { id, value } = event.target;
+    setVerifyFormData({ ...verifyformData, [id]: value });
   };
 
   const handleIdChange = (event) => {
-    const idImage = event.target.files[0];
-    setVerifyFormData({ ...verifyformData, idImage });
+    const id_card = event.target.files[0];
+    setVerifyFormData({ ...verifyformData, id_card });
   };
 
   const handleCertChange = (event) => {
-    const certImage = event.target.files[0];
-    setVerifyFormData({ ...verifyformData, certImage });
+    const certificate = event.target.files[0];
+    setVerifyFormData({ ...verifyformData, certificate });
   };
+
+  const [verifySubmitted, setVerifySubmitted] = useState(false);
 
   const handleVerifySubmit = async (event) => {
     event.preventDefault();
     setShowLoader(true);
-    const endpoint = "/api/verify/document";
+    const endpoint = "/api/auth/verify/credential";
     const formDataToSend = new FormData();
-    formDataToSend.append("fullName", verifyformData.fullName);
-    formDataToSend.append("phoneNumber", verifyformData.phoneNumber);
-    formDataToSend.append("idImage", verifyformData.idImage);
-    formDataToSend.append("certImage", verifyformData.certImage);
+    formDataToSend.append("full_name", verifyformData.full_name);
+    formDataToSend.append("number", verifyformData.number);
+    formDataToSend.append("id_card", verifyformData.id_card);
+    formDataToSend.append("certificate", verifyformData.certificate);
 
     try {
       const response = await fetch(endpoint, {
@@ -537,6 +572,7 @@ function App() {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
+      setVerifySubmitted(true);
       console.log(data);
     } catch (error) {
       console.error(error);
@@ -544,6 +580,50 @@ function App() {
       setShowLoader(false);
     }
   };
+
+  function confirmVerify() {
+    setVerifySubmitted(false);
+    navigate("/dashboard");
+    window.location.reload();
+  }
+
+  const [verifyStatus, setVerifyStatus] = useState(
+    JSON.parse(localStorage.getItem("verifyStatus")) || ""
+  );
+
+  useEffect(() => {
+    if (isLoggedIn) {
+      const fetchVerifyStatus = async () => {
+        setShowLoader(true);
+
+        try {
+          const response = await fetch("/api/auth/verify/status");
+          const data = await response.json();
+          console.log(data);
+
+          if (response.status === 204) {
+            setVerifyStatus("Unverified");
+          }
+
+          // if (data.message === "You credential is still under review") {
+          //   setVerifyStatus("identity in review");
+          //   localStorage.setItem(
+          //     "verifyStatus",
+          //     JSON.stringify("identity in review")
+          //   );
+          // } else {
+          //   return;
+          // }
+        } catch (error) {
+          console.log(error);
+        } finally {
+          setShowLoader(false);
+        }
+      };
+
+      fetchVerifyStatus();
+    }
+  }, [isLoggedIn]);
 
   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide
   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide   //to add tour guide
@@ -576,6 +656,11 @@ function App() {
 
   const [trackAddTg, setTrackAddTg] = useState(false);
   const [tourGuideAdded, setTourGuideAdded] = useState(false);
+  const [tooLarge, setTooLarge] = useState(false);
+  useEffect(() => {
+    setTooLarge("");
+  }, [currentPage, tourGuideformData]);
+
   const handleTourGuideSubmit = async (event) => {
     event.preventDefault();
     setShowLoader(true);
@@ -586,11 +671,12 @@ function App() {
     formDataToSend.append("profile_image", tourGuideformData.profile_image);
     formDataToSend.append("id_card", tourGuideformData.id_card);
 
+    const response = await fetch(endpoint, {
+      method: "POST",
+      body: formDataToSend,
+    });
+
     try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        body: formDataToSend,
-      });
       if (!response.ok) {
         throw new Error("Network response was not ok");
       }
@@ -599,6 +685,11 @@ function App() {
       setTourGuideAdded(true);
     } catch (error) {
       console.error(error);
+      if (response.status === 413) {
+        setTooLarge("too large");
+      } else if (response.status === 504) {
+        setTooLarge("network timeout");
+      }
     } finally {
       setShowLoader(false);
     }
@@ -645,6 +736,51 @@ function App() {
     }
   }, [isLoggedIn, trackAddTg]);
 
+  //create tour package button
+  const [noTourGuide, setNoTourGuide] = useState(false);
+  useEffect(() => {
+    setNoTourGuide(false);
+  }, [currentPage]);
+
+  function addTourPackage() {
+    if (tourGuideFromDb.length > 0) {
+      navigate("/step1");
+    } else if (tourGuideFromDb.length < 1) {
+      setNoTourGuide(true);
+    }
+  }
+  function cancelAddTgPrompt() {
+    setNoTourGuide(false);
+  }
+  //to delete tour guide
+  const [tgDeleted, setTgDeleted] = useState(false);
+  function tgDeletedReset() {
+    setTgDeleted(false);
+  }
+
+  const handleDeleteTg = async (id) => {
+    setShowLoader(true);
+
+    const endpoint = `/api/auth/guide/select/delete/${id}`;
+    try {
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      let arr = [...tourGuideFromDb];
+      let removedArr = arr.filter((item) => item._id !== id);
+      setTourGuideFromDb(removedArr);
+      localStorage.setItem("tourGuides", JSON.stringify(removedArr));
+      setTgDeleted(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setShowLoader(false);
+    }
+  };
   return (
     <>
       <Routes>
@@ -715,6 +851,9 @@ function App() {
                 tourPackageFromDb={tourPackageFromDb}
                 errorTpFetch={errorTpFetch}
                 showLoader={showLoader}
+                noTourGuide={noTourGuide}
+                cancelAddTgPrompt={cancelAddTgPrompt}
+                verifyStatus={verifyStatus}
               />
             ) : (
               <Login
@@ -746,6 +885,7 @@ function App() {
               showLoader={showLoader}
               tourGuideAdded={tourGuideAdded}
               confirmAddedTg={confirmAddedTg}
+              tooLarge={tooLarge}
             />
           }
         />
@@ -763,6 +903,9 @@ function App() {
               closeUserMod={closeUserMod}
               showLoader={showLoader}
               tourGuideFromDb={tourGuideFromDb}
+              tgDeleted={tgDeleted}
+              handleDeleteTg={handleDeleteTg}
+              tgDeletedReset={tgDeletedReset}
             />
           }
         />
@@ -794,6 +937,8 @@ function App() {
               handleCertChange={handleCertChange}
               handleVerifySubmit={handleVerifySubmit}
               showLoader={showLoader}
+              verifySubmitted={verifySubmitted}
+              confirmVerify={confirmVerify}
             />
           }
         />
@@ -833,6 +978,7 @@ function App() {
               handleRuleChange={handleRuleChange}
               joinRules={joinRules}
               rules={rules}
+              tourGuideFromDb={tourGuideFromDb}
             />
           }
         />

@@ -5,11 +5,11 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
-	"github.com/travas-io/travas-op/internal/controller"
+	"github.com/travas-io/travas-op/internal"
 )
 
-func Routes(r *gin.Engine, o controller.Operator) {
-	r.MaxMultipartMemory = 10 << 20
+func Routes(r *gin.Engine, srv internal.MainStore) {
+
 	// middleware for logging error and recovery from panic
 	router := r.Use(gin.Logger(), gin.Recovery())
 
@@ -25,28 +25,30 @@ func Routes(r *gin.Engine, o controller.Operator) {
 	router.Use(sessions.Sessions("session", cookieData))
 
 	// HTTP method , URL for each endpoint
-	router.GET("/", o.Welcome())
-	router.GET("/register", o.Register())
-	router.POST("/register", o.ProcessRegister())
-	router.GET("/login", o.LoginPage())
-	router.POST("/login", o.ProcessLogin())
+	router.GET("/", srv.Welcome())
+	router.GET("/register", srv.Register())
+	router.POST("/register", srv.ProcessRegister())
+	router.GET("/login", srv.LoginPage())
+	router.POST("/login", srv.ProcessLogin())
+
+	// Restricted HTTP method requests and URL to an endpoints
 
 	authRouter := r.Group("/auth")
-	// Restricted HTTP method requests and URL to an endpoints
 	authRouter.Use(Authorization())
 	{
 		// to verify uploaded document ---> not implemented yet
-		authRouter.POST("/verify/documents", o.VerifyDocument())
+		authRouter.POST("/verify/credential", srv.VerifyDocument())
+    authRouter.GET("/verify/status", srv.CheckStatus())
 
 		// For operator to manage created tour packages
-		authRouter.POST("/add/packages", o.ProcessTourPackage())
-		authRouter.POST("/add/packages/test", o.TestTourPackage())
-		authRouter.GET("/load/packages", o.LoadTourPackage())
+		authRouter.POST("/add/packages", srv.ProcessTourPackage())
+		authRouter.POST("/add/packages/test", srv.TestTourPackage())
+		authRouter.GET("/load/packages", srv.LoadTourPackage())
 
 		// for Operator to manage tour guides
-		authRouter.POST("/guide/add", o.AddTourGuide())
-		authRouter.GET("/guide/load", o.GetTourGuide())
-		authRouter.GET("/guide/select/assign", o.SelectTourGuide())
-		authRouter.POST("/guide/select/delete/:id", o.DeleteTourGuide())
+		authRouter.POST("/guide/add", srv.AddTourGuide())
+		authRouter.GET("/guide/load", srv.GetTourGuide())
+		authRouter.GET("/guide/select/assign", srv.SelectTourGuide())
+		authRouter.DELETE("/guide/select/delete/:id", srv.DeleteTourGuide())
 	}
 }

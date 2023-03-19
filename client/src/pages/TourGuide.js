@@ -11,6 +11,9 @@ const TourGuide = ({
   logout,
   showLoader,
   tourGuideFromDb,
+  tgDeleted,
+  handleDeleteTg,
+  tgDeletedReset,
 }) => {
   return (
     <div className="w-full">
@@ -20,6 +23,28 @@ const TourGuide = ({
         handleCurrentPage={handleCurrentPage}
         logout={logout}
       />
+
+      {tgDeleted && (
+        <div className="bg-slate-800/80 w-full h-screen p-3 z-[100] fixed top-0 right-0 flex justify-center items-center">
+          <div className="w-full md:w-[600px] p-8 bg-white rounded-md text-center">
+            <img
+              alt=""
+              src="/images/icons8-checkmark-64.png"
+              className="w-14 h-14 mx-auto mb-4"
+            />
+            <p className="font-normalmb-2">Tour guide deleted successfully!</p>
+
+            <div className="w-full flex justify-center gap-5 items-center">
+              <button
+                onClick={tgDeletedReset}
+                className="bg-blue-500 text-white rounded-md px-8 py-2 mt-4"
+              >
+                Okay
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="w-full md:w-[80%] float-right bg-white pt-[70px] md:pt-[50px] px-0 md:px-12">
         <div className="w-full min-h-[80vh] mb-16 px-2 md:px-0">
@@ -54,7 +79,14 @@ const TourGuide = ({
               <div className="w-full flex flex-col gap-6 md:gap-10">
                 {/* cont */}
                 {tourGuideFromDb.map((item, index) => {
-                  return <TourGuideCard item={item} key={index} />;
+                  return (
+                    <TourGuideCard
+                      item={item}
+                      key={index}
+                      handleDeleteTg={handleDeleteTg}
+                      tgDeleted={tgDeleted}
+                    />
+                  );
                 })}
               </div>
             )}

@@ -5,11 +5,9 @@ import (
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/travas-io/travas-op/model"
+	"github.com/travas-io/travas-op/pkg/upload"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"io/ioutil"
-	"mime/multipart"
 	"net/http"
-	"path/filepath"
 	"strings"
 )
 
@@ -24,45 +22,38 @@ func (op *Operator) AddTourGuide() gin.HandlerFunc {
 
 		if !ok {
 			_ = ctx.AbortWithError(http.StatusNotFound, errors.New("cannot find operator id"))
-		}
+    }
 
-		imageFile := make(map[string]*multipart.FileHeader, 0)
 		form := ctx.Request.MultipartForm
 
-		file, ok := form.File["profile_image"]
-
-		if file[0].Filename != "" {
-			fileByte, err := ioutil.ReadAll(ctx.Request.Body)
-			if err != nil {
-				_ = ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot upload images"))
-				return
-			}
-
-			if len(fileByte) > MEMORYMAXSIZE {
-				_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("image too large"))
-				return
-			}
-
-			ext := filepath.Ext(file[0].Filename)
-			if ext != ".png" && ext != ".jpg" && ext != ".jpeg" {
-				_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid image format"))
-			}
-
+		imageInfo, err := upload.SingleFile(form, "profile_image","profile_data",)
+		if err != nil {
+			_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
+      return
 		}
-		imageFile["profile_image"] = file[0]
 
+    IDInfo, err := upload.SingleFile(form, "id_card", "id_card_data")
+    if err != nil{
+      _ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
+    return
+    }
+
+    
+	
 		tourGuide := &model.TourGuide{
 			OperatorID:   userInfo.ID,
 			ID:           primitive.NewObjectID().Hex(),
 			Name:         ctx.Request.Form.Get("full_name"),
 			Bio:          ctx.Request.Form.Get("bio"),
-			ProfileImage: imageFile,
+			ProfileImage: imageInfo,
+      IDCard: IDInfo,
 		}
 
-		ok, err := op.DB.InsertTourGuide(tourGuide)
+		ok, err = op.DB.InsertTourGuide(tourGuide)
 		if !ok {
 			_ = ctx.AbortWithError(http.StatusInternalServerError, gin.Error{Err: err})
 		}
+
 		ctx.JSONP(http.StatusOK, gin.H{"message": "tour guide added"})
 	}
 }
@@ -94,10 +85,9 @@ func (op *Operator) DeleteTourGuide() gin.HandlerFunc {
 		if err != nil {
 			_ = ctx.AbortWithError(http.StatusInternalServerError, gin.Error{Err: err})
 			return
-
 		}
-		ctx.JSONP(http.StatusOK, gin.H{"message": "successfully remove tour guide"})
 
+		ctx.JSONP(http.StatusOK, gin.H{"message": "tour guide delete successfully"})
 	}
 }
 

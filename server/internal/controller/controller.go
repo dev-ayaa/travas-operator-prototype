@@ -8,29 +8,32 @@ import (
 	"regexp"
 	"time"
 
+	"github.com/travas-io/travas-op/internal"
+	"github.com/travas-io/travas-op/internal/pkg/encrypt"
+	"github.com/travas-io/travas-op/internal/pkg/token"
+	"github.com/travas-io/travas-op/internal/query/mongodb"
+	"github.com/travas-io/travas-op/pkg/config"
+	"github.com/travas-io/travas-op/pkg/upload"
+
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
-	"github.com/travas-io/travas-op/internal/config"
-	"github.com/travas-io/travas-op/internal/encrypt"
 	"github.com/travas-io/travas-op/internal/query"
-	"github.com/travas-io/travas-op/internal/token"
 	"github.com/travas-io/travas-op/model"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-// Operator : It holds all the neccessary field n
+// Operator : It holds all the necessary field n
 type Operator struct {
-	App *config.Tools
+	App *config.Logger
 	DB  query.Repo
 }
 
-
-func NewOperator(app *config.Tools, db *mongo.Client) *Operator {
+func NewOperator(app *config.Logger, db *mongo.Client) internal.MainStore {
 	return &Operator{
 		App: app,
-		DB:  query.NewOperatorDB(app, db),
+		DB:  mongodb.NewOperatorDB(app, db),
 	}
 }
 
@@ -84,7 +87,7 @@ func (op *Operator) ProcessRegister() gin.HandlerFunc {
 		if err := op.App.Validator.Struct(&user); err != nil {
 			if _, ok := err.(*validator.InvalidValidationError); !ok {
 				_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
-				op.App.InfoLogger.Println(err)
+				op.App.Info.Println(err)
 				return
 			}
 		}
@@ -182,7 +185,7 @@ func (op *Operator) ProcessLogin() gin.HandlerFunc {
 				}
 
 				// var tk map[string]string
-				tk := map[string]string{"t1": t1, "t2": t2}
+				tk := map[string]any{"token": t1, "new_token": t2}
 
 				// update the database adding the token to user database
 				_, updateErr := op.DB.UpdateInfo(userInfo.ID, tk)
@@ -212,9 +215,77 @@ func (op *Operator) ProcessLogin() gin.HandlerFunc {
 func (op *Operator) VerifyDocument() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		//	todo --> verify document upload by the tour operator
-		//	this will involve scanning the pdf format of the document
-		//	signature and other details needed
+		if err := ctx.Request.ParseMultipartForm(int64(MEMORYMAXSIZE)); err != nil {
+			_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
+		}
+
+		cookieData := sessions.Default(ctx)
+		userInfo, ok := cookieData.Get("info").(model.UserInfo)
+
+		if !ok {
+			_ = ctx.AbortWithError(http.StatusNotFound, errors.New("cannot find operator id"))
+		}
+
+		form := ctx.Request.MultipartForm
+
+		IDcard, err := upload.SingleFile(form, "id_card", "Id_data")
+		if err != nil {
+			_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
+			return
+		}
+
+		certf, err := upload.SingleFile(form, "certificate", "certificate_data")
+		if err != nil {
+			_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
+			return
+		}
+
+		credential := map[string]any{
+			"full_name":   form.Value["full_name"],
+			"phone":       form.Value["phone"],
+			"id_card":     IDcard,
+			"certificate": certf,
+			"status":      "Not Verified",
+		}
+
+		ok, err = op.DB.UpdateInfo(userInfo.ID, credential)
+		if !ok {
+			_ = ctx.AbortWithError(http.StatusInternalServerError, gin.Error{Err: err})
+			return
+		}
+
+		ctx.JSONP(http.StatusOK, gin.H{"message": "credential submitted successfully"})
 	}
+
+}
+
+func (op *Operator) CheckStatus() gin.HandlerFunc {
+	return func(ctx *gin.Context) {
+		cookieData := sessions.Default(ctx)
+		userInfo, ok := cookieData.Get("info").(model.UserInfo)
+		
+    if !ok {
+			_ = ctx.AbortWithError(http.StatusNotFound, errors.New("cannot find operator id"))
+		}
+
+		res, err := op.DB.FindStatus(userInfo.ID)
+    if err != nil{
+      _ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
+      return
+    }
+
+		status := (res["status"]).(string) 
+
+    switch status {
+		case "":
+        ctx.JSONP(http.StatusNoContent, gin.H{"message": "Please verify your credential"})
+    case "Verified":
+      // this will be added in the backend of the admin panel after the admin verify the operator
+			ctx.JSONP(http.StatusOK, gin.H{"message": "You have been verified successfully"})
+    case "Not Verified":
+			ctx.JSONP(http.StatusNoContent, gin.H{"message": "You credential is still under review"})
+     }
+  }
 }
 
 // Dashboard : this will help load up and process all the user details,information and all the
@@ -225,13 +296,13 @@ func (op *Operator) Dashboard() gin.HandlerFunc {
 	}
 }
 
-
+// GetTourRequest :: not implemented yet
 func (op *Operator) GetTourRequest() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		// Todo -> get all the tour request from the tourists collections
 		//	and compare and check for the date with the present date
 		requestTours, err := op.DB.ValidTourRequest()
-		if err != nil {
+if err != nil {
 			_ = ctx.AbortWithError(http.StatusInternalServerError, gin.Error{Err: err})
 			return
 		}

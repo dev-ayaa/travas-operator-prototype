@@ -1,12 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Footer from "../Footer";
 import ScrollToTop from "../ScrollToTop";
 
-export default function Step3({ joinRules, handleRuleChange, rules }) {
+export default function Step3({
+  joinRules,
+  handleRuleChange,
+  rules,
+  tourGuideFromDb,
+}) {
+  const [assignTg, setAssignTg] = useState(false);
+  function toggleAssign() {
+    setAssignTg((prev) => !prev);
+  }
+
+  const [imageArr, setImageArr] = useState([]);
+  useEffect(() => {
+    tourGuideFromDb.forEach((item) => {
+      const file = item?.profile_image.profile_data;
+      if (file) {
+        const data = new Uint8Array(
+          atob(file.Data)
+            .split("")
+            .map((c) => c.charCodeAt(0))
+        );
+        const blob = new Blob([data], {
+          type: "image/jpeg" || "image/png" || "image/jpg",
+        });
+        const url = URL.createObjectURL(blob);
+        setImageArr((prev) => [...prev, url]);
+      }
+    });
+  }, [tourGuideFromDb]);
   return (
     <>
-      <div className="pt-[100px] md:pt-[120px] w-[90%] px-1 mx-auto md:w-full md:mx-0 md:px-[80px] pb-20">
+      <div className="pt-[100px] md:pt-[120px] w-[90%] px-1 mx-auto md:w-full md:mx-0 md:px-[80px] pb-20 ">
         <Link to="/step2">
           <div className="flex items-center space-x-4">
             <img className="w-[16px]" src="/images/arrow.svg" alt="arrow" />
@@ -117,14 +145,48 @@ export default function Step3({ joinRules, handleRuleChange, rules }) {
         </div>
 
         {/* Assign budget */}
-        <div className="flex justify-start mt-12 space-x-6">
-          <button className="bg-[#1F66D0] text-white font-semibold py-2 px-12 flex items-center shadow-md">
-            Assign
-            <span className="pl-4">
-              <img className="w-[14px]" src="/images/plus2.svg" alt="img" />
-            </span>
-          </button>
-        </div>
+        {!assignTg ? (
+          <div
+            onClick={toggleAssign}
+            className="flex justify-start mt-12 space-x-6"
+          >
+            <button className="bg-[#1F66D0] text-white font-semibold py-2 px-12 flex items-center shadow-md">
+              Assign
+              <span className="pl-4">
+                <img className="w-[14px]" src="/images/plus2.svg" alt="img" />
+              </span>
+            </button>
+          </div>
+        ) : (
+          <div className="w-full sm:w-[500px] mt-6 pt-14 px-4 rounded-lg bg-white border shadow-lg relative transition-all duration-300 ease-out">
+            <img
+              onClick={toggleAssign}
+              alt=""
+              src="/images/Cancel.svg"
+              className="w-8 h-8 absolute top-1 right-1 cursor-pointer"
+            />
+            <h2 className="font-medium mb-4 text-center">
+              Select a tour guide
+            </h2>
+            {tourGuideFromDb.map((item, index) => {
+              return (
+                <div
+                  key={index}
+                  className="w-full px-3 md:px-5 py-2 mb-3 border rounded-md flex items-center gap-3 md:gap-6 hover:bg-blue-400/30 cursor-pointer"
+                >
+                  <img
+                    alt=""
+                    src={imageArr[index]}
+                    className="w-8 md:w-14 h-8 md:h-14 rounded-full object-cover border border-blue-400"
+                  />
+                  <p className="font-normal text-[0.85rem] md:text-[1rem]">
+                    {item?.full_name}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+        )}
 
         {/* Invite */}
         {/* <div className="pt-16">

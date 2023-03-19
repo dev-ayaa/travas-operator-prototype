@@ -1,11 +1,10 @@
 package main
 
 import (
+	"github.com/travas-io/travas-op/internal/pkg/token"
 	"net/http"
 
 	"github.com/gin-contrib/sessions"
-	"github.com/travas-io/travas-op/internal/token"
-
 	"github.com/gin-gonic/gin"
 	"github.com/pkg/errors"
 )
@@ -18,7 +17,6 @@ func Authorization() gin.HandlerFunc {
 			_ = ctx.AbortWithError(http.StatusNoContent, errors.New("no value for token"))
 			return
 		}
-		// fmt.Println(tokenString)
 
 		parse, err := token.Parse(tokenString)
 		if err != nil {

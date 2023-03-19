@@ -757,6 +757,14 @@ video {
   right: -10px;
 }
 
+.top-1 {
+  top: 0.25rem;
+}
+
+.right-1 {
+  right: 0.25rem;
+}
+
 .top-2 {
   top: 0.5rem;
 }
@@ -885,6 +893,10 @@ video {
   margin-bottom: 0.75rem;
 }
 
+.mt-16 {
+  margin-top: 4rem;
+}
+
 .mt-10 {
   margin-top: 2.5rem;
 }
@@ -905,8 +917,8 @@ video {
   margin-bottom: 2rem;
 }
 
-.mt-16 {
-  margin-top: 4rem;
+.mt-6 {
+  margin-top: 1.5rem;
 }
 
 .mt-5 {
@@ -923,10 +935,6 @@ video {
 
 .mb-10 {
   margin-bottom: 2.5rem;
-}
-
-.mt-6 {
-  margin-top: 1.5rem;
 }
 
 .mt-2 {
@@ -1275,6 +1283,10 @@ video {
   gap: 0.75rem;
 }
 
+.gap-5 {
+  gap: 1.25rem;
+}
+
 .gap-8 {
   gap: 2rem;
 }
@@ -1461,6 +1473,11 @@ video {
   border-color: rgb(34 197 94 / var(--tw-border-opacity));
 }
 
+.border-red-400 {
+  --tw-border-opacity: 1;
+  border-color: rgb(248 113 113 / var(--tw-border-opacity));
+}
+
 .border-\[\#1F66D0\] {
   --tw-border-opacity: 1;
   border-color: rgb(31 102 208 / var(--tw-border-opacity));
@@ -1494,11 +1511,6 @@ video {
 .border-red-500 {
   --tw-border-opacity: 1;
   border-color: rgb(239 68 68 / var(--tw-border-opacity));
-}
-
-.border-red-400 {
-  --tw-border-opacity: 1;
-  border-color: rgb(248 113 113 / var(--tw-border-opacity));
 }
 
 .border-slate-700 {
@@ -1554,6 +1566,15 @@ video {
   background-color: rgb(182 177 177 / var(--tw-bg-opacity));
 }
 
+.bg-red-400\/20 {
+  background-color: rgb(248 113 113 / 0.2);
+}
+
+.bg-yellow-100 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(254 249 195 / var(--tw-bg-opacity));
+}
+
 .bg-slate-600\/90 {
   background-color: rgb(71 85 105 / 0.9);
 }
@@ -1569,6 +1590,11 @@ video {
 
 .bg-\[\#B6B1B1\]\/20 {
   background-color: rgb(182 177 177 / 0.2);
+}
+
+.bg-gray-400 {
+  --tw-bg-opacity: 1;
+  background-color: rgb(156 163 175 / var(--tw-bg-opacity));
 }
 
 .bg-gray-200\/60 {
@@ -1628,6 +1654,10 @@ video {
 
 .p-2 {
   padding: 0.5rem;
+}
+
+.p-4 {
+  padding: 1rem;
 }
 
 .p-\[25px\] {
@@ -1948,6 +1978,10 @@ video {
   font-size: .8rem;
 }
 
+.text-\[\.85rem\] {
+  font-size: .85rem;
+}
+
 .text-\[0\.8rem\] {
   font-size: 0.8rem;
 }
@@ -2052,6 +2086,17 @@ video {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.shadow-lg {
+  --tw-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --tw-shadow-colored: 0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
+.filter {
+  -webkit-filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+          filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
+}
+
 .transition-all {
   transition-property: all;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
@@ -2064,6 +2109,10 @@ video {
 
 .duration-500 {
   transition-duration: 500ms;
+}
+
+.ease-out {
+  transition-timing-function: cubic-bezier(0, 0, 0.2, 1);
 }
 
 .slide {
@@ -2224,6 +2273,10 @@ li::marker {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
+.hover\:bg-blue-400\/30:hover {
+  background-color: rgb(96 165 250 / 0.3);
+}
+
 .hover\:bg-blue-400:hover {
   --tw-bg-opacity: 1;
   background-color: rgb(96 165 250 / var(--tw-bg-opacity));
@@ -2250,6 +2303,10 @@ li::marker {
 
   .sm\:w-\[600px\] {
     width: 600px;
+  }
+
+  .sm\:w-\[500px\] {
+    width: 500px;
   }
 
   .sm\:w-\[300px\] {
@@ -2336,12 +2393,12 @@ li::marker {
     height: 100px;
   }
 
-  .md\:h-\[70px\] {
-    height: 70px;
-  }
-
   .md\:h-14 {
     height: 3.5rem;
+  }
+
+  .md\:h-\[70px\] {
+    height: 70px;
   }
 
   .md\:h-\[80px\] {
@@ -2390,12 +2447,12 @@ li::marker {
     width: 80%;
   }
 
-  .md\:w-\[85\%\] {
-    width: 85%;
-  }
-
   .md\:w-14 {
     width: 3.5rem;
+  }
+
+  .md\:w-\[85\%\] {
+    width: 85%;
   }
 
   .md\:w-\[45\%\] {

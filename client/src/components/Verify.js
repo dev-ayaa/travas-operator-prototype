@@ -11,10 +11,33 @@ const Verify = ({
   handleIdChange,
   handleCertChange,
   showLoader,
+  verifySubmitted,
+  confirmVerify,
 }) => {
   return (
     <>
       {showLoader && <Loader />}
+      {verifySubmitted && (
+        <div className="bg-slate-800/80 w-full h-screen p-3 z-[100] fixed top-0 right-0 flex justify-center items-center">
+          <div className="w-full md:w-[600px] p-8 bg-white rounded-md text-center">
+            <img
+              alt=""
+              src="/images/icons8-checkmark-64.png"
+              className="w-14 h-14 mx-auto mb-4"
+            />
+            <p className="font-medium mb-3">
+              Your details have been submitted succesfully{" "}
+            </p>
+
+            <button
+              onClick={confirmVerify}
+              className="bg-blue-500 text-white rounded-md px-8 py-2 mt-4"
+            >
+              Okay
+            </button>
+          </div>
+        </div>
+      )}
       <div className="pt-[100px] pb-48 w-[90%] mx-auto md:w-[50%] md:pt-[150px] md:mx-0 md:pl-[80px]">
         <div className="flex items-center space-x-4 mb-8">
           <Link to="/dashboard">
@@ -41,7 +64,7 @@ const Verify = ({
               Name of Sole proprietor, Director or representative
             </label>
             <input
-              id="fullName"
+              id="full_name"
               className="login-input"
               type="text"
               placeholder="Full name"
@@ -72,7 +95,7 @@ const Verify = ({
               </select> */}
 
               <input
-                id="phoneNumber"
+                id="number"
                 className="bg-[#F5F5F5] text-black text-opacity-50 w-full pl-4 py-2.5 focus:outline-none rounded-sm"
                 type="number"
                 placeholder="Mobile number"
@@ -91,14 +114,14 @@ const Verify = ({
             <div className="mt-3">
               <div className="w-full rounded-sm border p-2 block sm:flex justify-start items-center gap-2">
                 <input
-                  id="idImage"
+                  id="id_card"
                   className="custom-file-input"
                   type="file"
                   placeholder="Upload ID"
                   accept="image/*"
                   onChange={handleIdChange}
                 />
-                <p>{verifyformData.idImage?.name}</p>
+                <p>{verifyformData.id_card?.name}</p>
               </div>
             </div>
             {/* <button className="bg-[#B6B1B1] text-center py-2 px-12 rounded-lg pointer">
@@ -120,14 +143,14 @@ const Verify = ({
             <div className="space-y-8 mt-3">
               <div className="w-full rounded-sm border p-2 block sm:flex justify-start items-center gap-2">
                 <input
-                  id="certImage"
+                  id="certificate"
                   className="custom-file-input"
                   type="file"
                   placeholder="Upload ID"
                   accept="image/*"
                   onChange={handleCertChange}
                 />
-                <p>{verifyformData.certImage?.name}</p>
+                <p>{verifyformData.certificate?.name}</p>
               </div>
             </div>
           </div>

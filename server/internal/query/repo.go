@@ -9,11 +9,12 @@ import (
 // Repo : interface that holds all the database queries methods
 type Repo interface {
 	
-	InsertUser(user *model.Operator) (bool, int, error)
+  InsertUser(user *model.Operator) (bool, int, error)
 	VerifyUser(email string) (primitive.M, error)
-	UpdateInfo(userID primitive.ObjectID, tk map[string]string) (bool, error)
-
-	InsertPackage(tour *model.Tour) (bool, error)
+	UpdateInfo(userID primitive.ObjectID, data map[string]any) (bool, error)
+  FindStatus(userID primitive.ObjectID) (primitive.M, error )
+	
+  InsertPackage(tour *model.Tour) (bool, error)
 	LoadTours(id primitive.ObjectID) ([]primitive.M, error)
 	ValidTourRequest() ([]primitive.M, error)
 

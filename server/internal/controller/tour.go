@@ -3,6 +3,7 @@ package controller
 import (
 	"errors"
 	"fmt"
+	"github.com/travas-io/travas-op/pkg/upload"
 	"io"
 	"io/ioutil"
 	"log"
@@ -47,14 +48,16 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 			return
 		}
 		// Get the uploaded images from the client app
-		imageStream := make(map[string][]*multipart.Part, 0)
-
+		imageStream := make(map[string][]interface{}, 0)
+		//image := make(map[string])
+		count := 0
 		for {
 			form, err := multipartReader.NextPart()
 			log.Println(form)
 			if err == io.EOF {
 				break
 			}
+
 			if err != nil {
 				_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
 			}
@@ -62,7 +65,19 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 
 				fileByte, err := ioutil.ReadAll(form)
 				if err != nil {
-					_ = ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot read file from request body"))
+					_ = ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot upload images"))
+					return
+				}
+				defer func(form *multipart.Part) {
+					err := form.Close()
+					if err != nil {
+						return
+					}
+				}(form)
+
+				fileByte, err = ioutil.ReadAll(form)
+				if err != nil {
+					_ = ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot read image data"))
 					return
 				}
 
@@ -75,7 +90,11 @@ func (op *Operator) ProcessTourPackage() gin.HandlerFunc {
 				if ext != ".png" && ext != ".jpg" && ext != ".jpeg" {
 					_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid image format"))
 				}
-				imageStream["tour_image"] = append(imageStream["tour_image"], form)
+				count += 1
+				bk := fmt.Sprintf("image_data_%d", count)
+				img := fmt.Sprintf("tour_image_%d", count)
+				imageStream[bk] = append(imageStream[bk], fileByte)
+				imageStream["img"] = append(imageStream[img], form)
 
 			}
 
@@ -180,48 +199,15 @@ func (op *Operator) TestTourPackage() gin.HandlerFunc {
 		}
 
 		// Get the uploaded images from the client app
-		imageArr := make(map[string][]*multipart.FileHeader, 0)
-		multiFile, ok := ctx.Request.MultipartForm.File["tour_image"]
-		if !ok {
-			_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("no upload image"))
-			return
-		}
+		var imageArr map[string]interface{}
 
-		// Check through the uploaded images. validate the filesize, format and append to a slice of a map
-		for _, file := range multiFile {
+		form := ctx.Request.MultipartForm
 
-			uploadFile, err := file.Open()
-			if err != nil {
-				_ = ctx.AbortWithError(http.StatusInternalServerError, gin.Error{Err: err})
-				return
-			}
-			defer func(uploadFile multipart.File) {
-				err := uploadFile.Close()
-				if err != nil {
-					return
-				}
-			}(uploadFile)
-
-			fileByte, err := ioutil.ReadAll(uploadFile)
-			if err == io.EOF {
-				break
-			}
-			if err != nil {
-				_ = ctx.AbortWithError(http.StatusInternalServerError, errors.New("cannot upload images"))
-				return
-			}
-			if len(fileByte) > MEMORYMAXSIZE {
-				_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("image too large"))
-				return
-			}
-
-			ext := filepath.Ext(file.Filename)
-			if ext != ".png" && ext != ".jpg" && ext != ".jpeg" {
-				_ = ctx.AbortWithError(http.StatusBadRequest, errors.New("invalid image format"))
-			}
+		imageArr, err := upload.MultiFile(form, "tour_image", "tour_image_data")
+		if err != nil {
+			_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
 
 		}
-		imageArr["tour_image"] = multiFile
 
 		wte := ctx.Request.MultipartForm.Value["what_to_expect"]
 		whatToExpect := make(map[string]string)
@@ -258,9 +244,9 @@ func (op *Operator) TestTourPackage() gin.HandlerFunc {
 			CreatedAt:       time.Now(),
 			UpdatedAt:       time.Now(),
 		}
-
+	
 		// Validate the Images Upload field
-		err := op.App.Validator.RegisterValidation("tour_image", ValidateImage)
+		err = op.App.Validator.RegisterValidation("tour_image", ValidateImage)
 		if err != nil {
 			_ = ctx.AbortWithError(http.StatusBadRequest, gin.Error{Err: err})
 			return

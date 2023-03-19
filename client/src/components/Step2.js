@@ -225,7 +225,9 @@ function Step2({
                       </div>
                     )}
                     <img
-                      src={Object.values(item)[0]}
+                      src={(window.URL || window.webkitURL)?.createObjectURL(
+                        item
+                      )}
                       alt="tour"
                       className="w-[100px] h-[100px] rounded-md object-cover object-center"
                     />

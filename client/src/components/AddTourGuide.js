@@ -14,6 +14,7 @@ const AddTourGuide = ({
   displaProfileImage,
   tourGuideAdded,
   confirmAddedTg,
+  tooLarge,
 }) => {
   return (
     <>
@@ -168,14 +169,19 @@ const AddTourGuide = ({
             </div>
           </div>
 
-          <div className="space-y-12">
-            <div className="space-y-2">
-              <p className="font-light">
-                The information provided would be reviewed
+          {tooLarge && (
+            <div className="w-full p-3 bg-red-400/20 border border-red-400 rounded-md font-normal">
+              <p>
+                {tooLarge === "too large"
+                  ? "Image file size is too large"
+                  : tooLarge === "network timeout"
+                  ? "Bad network connection"
+                  : null}
               </p>
-              <p className="font-medium">Review might take up to 24 hours.</p>
             </div>
+          )}
 
+          <div className="space-y-12">
             <div className=" mx-auto">
               <button
                 onClick={handleTourGuideSubmit}
@@ -187,6 +193,12 @@ const AddTourGuide = ({
             </div>
           </div>
         </form>
+        <div className="w-full sm:w-[600px] mt-16 mx-auto p-4 text-center bg-yellow-100">
+          <p className="font-light">
+            The information provided would be reviewed
+          </p>
+          <p className="font-medium">Review might take up to 24 hours.</p>
+        </div>
       </div>
       <Footer />
       <ScrollToTop />
